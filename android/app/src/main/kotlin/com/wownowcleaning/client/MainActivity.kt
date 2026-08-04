@@ -1,4 +1,4 @@
-package com.example.wow_cleaning
+package com.wownowcleaning.client
 
 import io.flutter.embedding.android.FlutterActivity
 
