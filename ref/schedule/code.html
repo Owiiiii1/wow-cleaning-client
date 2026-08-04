@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Schedule - WOW NOW</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#37b7ff",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary-fixed": "#ffe169",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-background": "#1b1c1c",
+                        "inverse-primary": "#8bceff",
+                        "surface-container-low": "#f5f3f3",
+                        "on-primary-container": "#004567",
+                        "on-tertiary-container": "#3f4141",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "background": "#fbf9f8",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "inverse-surface": "#303030",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#bec8d2",
+                        "secondary-container": "#fede58",
+                        "inverse-on-surface": "#f2f0f0",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#5d5f5f",
+                        "surface-bright": "#fbf9f8",
+                        "surface-variant": "#e4e2e2",
+                        "on-surface-variant": "#3e4850",
+                        "on-secondary-fixed-variant": "#544600",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#006492",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#c9e6ff",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "surface-container-high": "#eae8e7",
+                        "secondary-fixed-dim": "#e3c541",
+                        "primary-fixed-dim": "#8bceff",
+                        "surface-container": "#efeded",
+                        "on-primary-fixed": "#001e2f",
+                        "surface-dim": "#dbd9d9",
+                        "surface": "#fbf9f8",
+                        "on-primary-fixed-variant": "#004b6f",
+                        "primary": "#006492",
+                        "tertiary-container": "#acadad",
+                        "on-secondary-fixed": "#221b00",
+                        "secondary": "#6f5d00",
+                        "surface-container-highest": "#e4e2e2",
+                        "outline": "#6e7882",
+                        "on-secondary-container": "#746100",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1c1c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "base": "8px",
+                        "gutter": "16px",
+                        "container-margin": "20px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "section-title": ["Montserrat"],
+                        "label-sm": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "body-md": ["Montserrat"],
+                        "body-lg": ["Montserrat"],
+                        "headline-md": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "section-title": ["14px", { "lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fbf9f8;
+        }
+        .clean-shadow {
+            box-shadow: 0px 4px 12px rgba(55, 183, 255, 0.08);
+        }
+        .active-glow {
+            filter: drop-shadow(0 0 8px rgba(55, 183, 255, 0.4));
+        }
+        /* Custom scrollbar for cleanliness */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 10px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-surface sticky top-0 z-50 flex items-center justify-between px-container-margin h-16 w-full shadow-[0px_4px_12px_rgba(55,183,255,0.08)]">
+<div class="flex items-center gap-base">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-fixed flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A friendly, high-quality 3D render of Benjamin the poodle, the mascot for WOW NOW CLEANING. Benjamin is a white, perfectly groomed poodle wearing a small Picton Blue bow tie, smiling warmly against a bright, airy background that evokes a sense of extreme cleanliness and professional home care. The lighting is soft and high-key, maintaining a premium modern corporate aesthetic with a playful edge." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-OqonLayDIJVUV8lcR59tEYu1HOhuGmN44AwcD0mUyngYch8WV_nwd6mM_ZgUstO-kBy9vHcuAQ_FqprMuT72P6TsIWw6mzasNitXsHmFpJUrjD1kYD-cisO76s7Byiv-qTl5QNAPAtuLfue1cVJ8uSHq2vbBJQSxvS930nsbtbqKPCCU2S7QISL9OPcGbcuJ8WdmJbllftgcHjDJe5jGlMOFE96NxNilSeknNLQqIB-ce-7KgtXuQC1FSi0Ug0FlL6Se8Bhm_rI"/>
+</div>
+<h1 class="font-display-lg text-headline-md text-primary tracking-tight">WOW NOW</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center text-primary-container hover:opacity-80 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[28px]">notifications</span>
+</button>
+</header>
+<main class="px-container-margin pt-lg max-w-2xl mx-auto">
+<!-- Header Section -->
+<div class="mb-xl">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">My Schedule</h2>
+<p class="font-body-md text-on-surface-variant">Manage your upcoming refreshing visits.</p>
+</div>
+<!-- Date Group: Next Week -->
+<div class="space-y-lg">
+<div class="flex items-center gap-md">
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+<span class="font-section-title text-section-title text-outline uppercase tracking-widest">This Week</span>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<!-- Cleaning Card 1 -->
+<div class="bg-surface-container-lowest p-md rounded-xl clean-shadow transition-transform hover:scale-[1.01] active:scale-95 cursor-pointer relative overflow-hidden">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-primary-container/15 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">home_speaker</span>
+</div>
+<div>
+<h3 class="font-body-lg font-bold text-on-background">Deep House Cleaning</h3>
+<p class="font-label-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                Tomorrow, 10:00 AM
+                            </p>
+</div>
+</div>
+<span class="bg-secondary-fixed/20 text-on-secondary-container px-3 py-1 rounded-full font-label-sm uppercase tracking-wider">Scheduled</span>
+</div>
+<div class="flex flex-col gap-xs mt-sm pt-sm border-t border-surface-variant/50">
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>124 Picton Ave, Crystal Waters</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-[18px]">person_outline</span>
+<span>Professional: Sarah Miller</span>
+</div>
+</div>
+<!-- Interaction Hint -->
+<div class="absolute right-4 bottom-4 text-outline-variant opacity-50">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<!-- Cleaning Card 2 -->
+<div class="bg-surface-container-lowest p-md rounded-xl clean-shadow transition-transform hover:scale-[1.01] active:scale-95 cursor-pointer relative overflow-hidden">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-primary-container/15 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">flatware</span>
+</div>
+<div>
+<h3 class="font-body-lg font-bold text-on-background">Kitchen Sanitation</h3>
+<p class="font-label-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                Friday, 2:30 PM
+                            </p>
+</div>
+</div>
+<span class="bg-secondary-fixed/20 text-on-secondary-container px-3 py-1 rounded-full font-label-sm uppercase tracking-wider">Scheduled</span>
+</div>
+<div class="flex flex-col gap-xs mt-sm pt-sm border-t border-surface-variant/50">
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>124 Picton Ave, Crystal Waters</span>
+</div>
+</div>
+<div class="absolute right-4 bottom-4 text-outline-variant opacity-50">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Date Group: Later -->
+<div class="mt-xl space-y-lg">
+<div class="flex items-center gap-md">
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+<span class="font-section-title text-section-title text-outline uppercase tracking-widest">Next Month</span>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<!-- Cleaning Card 3 -->
+<div class="bg-surface-container-lowest p-md rounded-xl clean-shadow transition-transform hover:scale-[1.01] active:scale-95 cursor-pointer relative overflow-hidden opacity-90">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 rounded-full bg-primary-container/15 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">cleaning_services</span>
+</div>
+<div>
+<h3 class="font-body-lg font-bold text-on-background">Full Property Refresh</h3>
+<p class="font-label-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                                Oct 12, 9:00 AM
+                            </p>
+</div>
+</div>
+<span class="bg-secondary-fixed/20 text-on-secondary-container px-3 py-1 rounded-full font-label-sm uppercase tracking-wider">Scheduled</span>
+</div>
+<div class="flex flex-col gap-xs mt-sm pt-sm border-t border-surface-variant/50">
+<div class="flex items-center gap-xs text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>88 Mustard St, Golden Heights</span>
+</div>
+</div>
+<div class="absolute right-4 bottom-4 text-outline-variant opacity-50">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Empty State Illustration Placeholder (Hidden if list is full, but here for UI richness) -->
+<div class="mt-xl text-center hidden">
+<div class="w-48 h-48 mx-auto mb-md opacity-40">
+<img class="w-full h-full object-contain" data-alt="A minimalist, clean 3D illustration of a sparkling calendar icon surrounded by soft floating bubbles and a single yellow mustard sparkle. The design is airy, with lots of white space, following a modern corporate aesthetic for a cleaning service brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlBfjw3WrZMcQrWrwAn4EQoH4mh5O7JfGqGWnN93bSeVgUlQBGTSW8i151jAyLYZi2LOcTzuZ20SBNqFiyUu3ht4DU4VPRMfXVhlV2JifPyUFJbEtwgnDTT71LGHT9mgwGIyjtvCYV7fBAahrENDo2RIIQBW0y1FU-Lzbiw63aaTcPaBnrxjJKpRxK3pjh2LAXiQDI8H1_kHc05WkXZbjqotkUxedZ9CY_j-aeeZOt_LlnPQahnpe5kPOM43qprxLn-xjTBi3QDWk"/>
+</div>
+<p class="font-body-lg text-on-surface-variant">No more scheduled visits.</p>
+<button class="mt-base font-section-title text-primary uppercase">Book a new session</button>
+</div>
+</main>
+<!-- Floating Action Button (As defined in context, FAB for booking on home/schedule) -->
+<button class="fixed bottom-24 right-container-margin w-14 h-14 bg-secondary-fixed text-on-secondary-container rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-xs py-base bg-surface-container-lowest shadow-[0px_-4px_12px_rgba(55,183,255,0.08)] rounded-t-xl pb-safe">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-primary-container/10 p-2 rounded-lg transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<!-- Schedule (Active) -->
+<a class="flex flex-col items-center justify-center text-primary font-bold active-glow p-2 rounded-lg transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="font-label-sm text-label-sm">Schedule</span>
+</a>
+<!-- Book (Center CTA) -->
+<div class="relative -top-4">
+<a class="flex flex-col items-center justify-center bg-secondary-fixed text-on-secondary-container w-14 h-14 rounded-full shadow-md hover:scale-105 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+</a>
+<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-sm text-label-sm text-on-surface-variant">Book</span>
+</div>
+<!-- Chat -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-primary-container/10 p-2 rounded-lg transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-label-sm text-label-sm">Chat</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-primary-container/10 p-2 rounded-lg transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for cards
+        document.querySelectorAll('.bg-surface-container-lowest').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'scale(1.01)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

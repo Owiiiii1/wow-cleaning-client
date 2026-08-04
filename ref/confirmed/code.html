@@ -1,0 +1,239 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+    :root {
+      --primary-blue: #37b7ff;
+      --mustard: #ffe169;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      overflow-x: hidden;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+    }
+    .sparkle {
+      position: absolute;
+      background: var(--mustard);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: sparkle-anim 2s infinite ease-in-out;
+      z-index: 10;
+    }
+    @keyframes sparkle-anim {
+      0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+      50% { transform: scale(1.2) rotate(45deg); opacity: 1; }
+    }
+    .floating-mascot {
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+    .success-badge-pulse {
+      animation: badge-pulse 3s infinite;
+    }
+    @keyframes badge-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(55, 183, 255, 0.4); }
+      70% { box-shadow: 0 0 0 20px rgba(55, 183, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(55, 183, 255, 0); }
+    }
+    .background-pattern {
+      background-image: radial-gradient(#37b7ff 0.5px, transparent 0.5px), radial-gradient(#37b7ff 0.5px, #fbf9f8 0.5px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      opacity: 0.05;
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "primary-container": "#37b7ff",
+                  "tertiary-fixed": "#e2e2e2",
+                  "secondary-fixed": "#ffe169",
+                  "on-secondary": "#ffffff",
+                  "error": "#ba1a1a",
+                  "on-background": "#1b1c1c",
+                  "inverse-primary": "#8bceff",
+                  "surface-container-low": "#f5f3f3",
+                  "on-primary-container": "#004567",
+                  "on-tertiary-container": "#3f4141",
+                  "on-tertiary-fixed-variant": "#454747",
+                  "background": "#fbf9f8",
+                  "on-tertiary-fixed": "#1a1c1c",
+                  "inverse-surface": "#303030",
+                  "on-tertiary": "#ffffff",
+                  "outline-variant": "#bec8d2",
+                  "secondary-container": "#fede58",
+                  "inverse-on-surface": "#f2f0f0",
+                  "error-container": "#ffdad6",
+                  "surface-container-lowest": "#ffffff",
+                  "tertiary": "#5d5f5f",
+                  "surface-bright": "#fbf9f8",
+                  "surface-variant": "#e4e2e2",
+                  "on-surface-variant": "#3e4850",
+                  "on-secondary-fixed-variant": "#544600",
+                  "on-error": "#ffffff",
+                  "surface-tint": "#006492",
+                  "on-error-container": "#93000a",
+                  "primary-fixed": "#c9e6ff",
+                  "tertiary-fixed-dim": "#c6c6c7",
+                  "surface-container-high": "#eae8e7",
+                  "secondary-fixed-dim": "#e3c541",
+                  "primary-fixed-dim": "#8bceff",
+                  "surface-container": "#efeded",
+                  "on-primary-fixed": "#001e2f",
+                  "surface-dim": "#dbd9d9",
+                  "surface": "#fbf9f8",
+                  "on-primary-fixed-variant": "#004b6f",
+                  "primary": "#006492",
+                  "tertiary-container": "#acadad",
+                  "on-secondary-fixed": "#221b00",
+                  "secondary": "#6f5d00",
+                  "surface-container-highest": "#e4e2e2",
+                  "outline": "#6e7882",
+                  "on-secondary-container": "#746100",
+                  "on-primary": "#ffffff",
+                  "on-surface": "#1b1c1c"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "xs": "4px",
+                  "base": "8px",
+                  "gutter": "16px",
+                  "container-margin": "20px",
+                  "lg": "24px",
+                  "xl": "32px",
+                  "md": "16px",
+                  "sm": "12px"
+          },
+          "fontFamily": {
+                  "section-title": ["Montserrat"],
+                  "label-sm": ["Montserrat"],
+                  "display-lg": ["Montserrat"],
+                  "body-md": ["Montserrat"],
+                  "body-lg": ["Montserrat"],
+                  "headline-md": ["Montserrat"]
+          },
+          "fontSize": {
+                  "section-title": ["14px", {"lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                  "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center">
+<!-- Background Pattern -->
+<div class="fixed inset-0 background-pattern pointer-events-none"></div>
+<!-- Subtle Branding Watermark -->
+<div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none select-none">
+<h1 class="font-display-lg text-[120px] leading-none text-primary whitespace-nowrap">WOW NOW</h1>
+</div>
+<!-- Header Anchor -->
+<header class="w-full h-16 flex items-center justify-between px-container-margin relative z-10">
+<div class="font-display-lg text-primary tracking-tighter">WOW NOW</div>
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of Benjamin, the friendly poodle mascot for WOW NOW CLEANING. Benjamin has curly white fur, bright intelligent eyes, and wears a small Picton Blue neckerchief with a sparkle icon. The background is a soft, high-key white, reflecting a clean and modern corporate aesthetic with a playful edge." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBre2tR4xlkp0736KszwoQE76GEfMQu5ushw9TPPkhe1035pVQGEGipgcIkDHlpA7edvuNEtTBHeR-R2VwCmhRNh-etmxTo9vStMrppnmExr06eRX_EUcwLQK0ObXxCYf8HlX4D1SdyFnTyIMjK3YIEpGE3ixDN2AIJ1J9DBJT-hXHz24Ac4s3vTFJ-3kAVG4QaTpetDcLFo2iq5SmB2RGE-wd_V2sRsvyjcfsZUF2DKjwV8eNaa3Pme7hj7ADeyyvYZMFEHou7Ad4">
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full max-w-md px-container-margin flex flex-col items-center justify-center text-center py-xl relative z-10">
+<!-- Success Badge Cluster -->
+<div class="relative mb-lg">
+<!-- Sparkles -->
+<div class="sparkle w-4 h-4 top-0 -left-6" style="animation-delay: 0.1s;"></div>
+<div class="sparkle w-6 h-6 -top-4 right-2" style="animation-delay: 0.5s;"></div>
+<div class="sparkle w-3 h-3 bottom-4 -right-8" style="animation-delay: 0.8s;"></div>
+<!-- Main Circular Badge -->
+<div class="w-32 h-32 rounded-full bg-primary-container flex items-center justify-center success-badge-pulse shadow-lg">
+<span class="material-symbols-outlined text-[64px] text-white" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Confirmation Text -->
+<h2 class="font-display-lg text-display-lg text-on-background mb-base">Booking Confirmed!</h2>
+<p class="font-body-lg text-on-surface-variant max-w-[280px] mx-auto">Benjamin is getting your team ready.</p>
+<!-- Mascot Focus Area -->
+<div class="mt-xl relative">
+<div class="floating-mascot w-48 h-48 mx-auto relative z-20">
+<img class="w-full h-full object-contain" alt="Benjamin the Poodle mascot in a professional suit waving hello" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNracN3Ys8GewOacBQxujMozVwRsVC4dodaS7SspRxh6lj__NVwGI0Se66K25ffVmPgogWoPcvhx8rwfs__zVaD74jKVkZAkntTt07idyTHGqgMsa7GxE5J4MvXrNqfmxHl7Icl3TgPGrYUwLF4Y4yog8KudSATpQSs_qanmSSpyQYRoztq2TkYKQSFxKIWkBDv-jsg0OXg3dDkOuw6GRaHljEvELB0kPkRnljvM4R-kK_Wr3t8zTqtSFGhd7sYZBnvagS2BFOSxs">
+</div>
+<!-- Shadow below mascot -->
+<div class="w-24 h-4 bg-on-surface-variant opacity-10 rounded-[100%] mx-auto mt-4 blur-sm"></div>
+</div>
+<!-- Action Section -->
+<section class="w-full mt-xl flex flex-col gap-sm">
+<button class="w-full py-4 bg-primary text-on-primary font-section-title text-section-title rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.08)] active:scale-95 transition-transform">
+        VIEW BOOKING DETAILS
+      </button>
+<button class="w-full py-4 bg-transparent border-2 border-outline-variant text-on-surface-variant font-section-title text-section-title rounded-xl hover:bg-surface-variant transition-colors active:scale-95">
+        BACK TO HOME
+      </button>
+</section>
+<!-- Celebration Micro-copy -->
+<div class="mt-lg flex items-center justify-center gap-xs text-primary">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">Sparkle Guaranteed</span>
+</div>
+</main>
+<!-- Interactive Sparkle Generator Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.body;
+      
+      const createSparkle = (x, y) => {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        const size = Math.random() * 10 + 5;
+        sparkle.style.width = `${size}px`;
+        sparkle.style.height = `${size}px`;
+        sparkle.style.left = `${x}px`;
+        sparkle.style.top = `${y}px`;
+        sparkle.style.animation = 'sparkle-anim 1s forwards';
+        container.appendChild(sparkle);
+        
+        setTimeout(() => sparkle.remove(), 1000);
+      };
+
+      // Periodic random sparkles
+      setInterval(() => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        createSparkle(x, y);
+      }, 3000);
+
+      // Button interaction
+      const primaryBtn = document.querySelector('button');
+      primaryBtn.addEventListener('click', (e) => {
+        for(let i=0; i<8; i++) {
+          setTimeout(() => {
+            const rect = primaryBtn.getBoundingClientRect();
+            const x = rect.left + Math.random() * rect.width;
+            const y = rect.top + Math.random() * rect.height;
+            createSparkle(x, y);
+          }, i * 50);
+        }
+      });
+    });
+  </script>
+
+
+</body></html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile - WOW NOW CLEANING</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#37b7ff",
+                    "tertiary-fixed": "#e2e2e2",
+                    "secondary-fixed": "#ffe169",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-background": "#1b1c1c",
+                    "inverse-primary": "#8bceff",
+                    "surface-container-low": "#f5f3f3",
+                    "on-primary-container": "#004567",
+                    "on-tertiary-container": "#3f4141",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "background": "#fbf9f8",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "inverse-surface": "#303030",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#bec8d2",
+                    "secondary-container": "#fede58",
+                    "inverse-on-surface": "#f2f0f0",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#5d5f5f",
+                    "surface-bright": "#fbf9f8",
+                    "surface-variant": "#e4e2e2",
+                    "on-surface-variant": "#3e4850",
+                    "on-secondary-fixed-variant": "#544600",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#006492",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#c9e6ff",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "surface-container-high": "#eae8e7",
+                    "secondary-fixed-dim": "#e3c541",
+                    "primary-fixed-dim": "#8bceff",
+                    "surface-container": "#efeded",
+                    "on-primary-fixed": "#001e2f",
+                    "surface-dim": "#dbd9d9",
+                    "surface": "#fbf9f8",
+                    "on-primary-fixed-variant": "#004b6f",
+                    "primary": "#006492",
+                    "tertiary-container": "#acadad",
+                    "on-secondary-fixed": "#221b00",
+                    "secondary": "#6f5d00",
+                    "surface-container-highest": "#e4e2e2",
+                    "outline": "#6e7882",
+                    "on-secondary-container": "#746100",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1b1c1c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "base": "8px",
+                    "gutter": "16px",
+                    "container-margin": "20px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "sm": "12px"
+            },
+            "fontFamily": {
+                    "section-title": ["Montserrat"],
+                    "label-sm": ["Montserrat"],
+                    "display-lg": ["Montserrat"],
+                    "body-md": ["Montserrat"],
+                    "body-lg": ["Montserrat"],
+                    "headline-md": ["Montserrat"]
+            },
+            "fontSize": {
+                    "section-title": ["14px", {"lineHeight": "20px", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sparkle-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(55, 183, 255, 0.1) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-40 h-16 w-full flex items-center justify-between px-container-margin shadow-[0px_4px_12px_rgba(55,183,255,0.08)]">
+<div class="flex items-center gap-base">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A friendly and clean-cut illustration of Benjamin the poodle mascot, the face of WOW NOW CLEANING, with white curly fur and a charming smile. He is set against a bright, minimalist studio background with soft Picton Blue accents, evoking a sense of hygiene, friendliness, and professional home services. The lighting is high-key and airy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyzu8nTiqbECvMZnNWNDixogsvCnQWEiCGIe3KQDnDMWUNm1CSaPuZUzXyGvowbPiVwiu1N0RuY_PEt5VgB74xOOMSuc71BzCujzoqKwyZwkFrRwMjBoQw_24hcQZT_kT-zhP97NsxfxtJhfn_uLlq4yFC0UvFa7uePzh0vDHXYPG-eXSrRdYxmWqZaNDDpMJFh4doc_ftADVVZfyHvSYGqi76GDh8lCfCcvmDrh4eUBRlYacvc9zBNLLOk8XLRvnEIVyhKbLs8zk"/>
+</div>
+</div>
+<h1 class="font-display-lg text-[20px] text-primary tracking-tight font-extrabold">WOW NOW</h1>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:opacity-80 transition-transform active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Profile Hero Section -->
+<main class="px-container-margin pt-lg sparkle-pattern">
+<section class="flex flex-col items-center mb-xl">
+<div class="relative mb-md">
+<div class="w-24 h-24 rounded-full border-4 border-surface-container-lowest shadow-[0px_8px_24px_rgba(55,183,255,0.15)] overflow-hidden transition-transform hover:scale-105 duration-300">
+<img class="w-full h-full object-cover" data-alt="A professional and friendly portrait of Sarah Johnson, a woman in her 30s with a warm smile, photographed in a bright, modern interior with high-quality natural lighting. The style is clean and corporate-chic, emphasizing trust and efficiency. The color palette is dominated by airy whites and subtle Picton Blue tones, matching a high-end service app aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvDPwxdf3IpTnPRRDHcr1l5RXdoYOz7Xswf4QnHkqSXI_Alq0t9ZK6KEfX9xrqmHvFRN4326p1SbBdQ6SdypjYo3Fq4jopshrQPUQwA5d8PKryWkx3D5-Hn0Zt94bxi9-k-uR3vRChixnwYjUQHj7hbNTeX9BQa83iTyuwStXo8mf9NUyUbe5quchA5IXzQBj5c0UODGIFhclo7TFFd8DhppWNdjy6lLvM2pLxl7RqYoIcqv1Dwj9CJ45UCwe2qHcX2MSikrG2adE"/>
+</div>
+<div class="absolute bottom-0 right-0 bg-secondary-fixed text-on-secondary-fixed p-1.5 rounded-full border-2 border-white shadow-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-background">Sarah Johnson</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">sarah.j@example.com</p>
+<!-- Quick Stats Bento Grid -->
+<div class="grid grid-cols-2 gap-sm w-full mt-lg">
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.06)] flex flex-col items-center border border-primary-container/10">
+<span class="font-headline-md text-primary">12</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider text-[10px]">Cleanings</span>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.06)] flex flex-col items-center border border-primary-container/10">
+<span class="font-headline-md text-secondary">4.9</span>
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider text-[10px]">Rating</span>
+</div>
+</div>
+</section>
+<!-- Account Options List -->
+<section class="space-y-sm">
+<div class="font-section-title text-section-title text-on-surface-variant mb-base px-xs uppercase">Account Management</div>
+<!-- Option Card -->
+<button class="w-full flex items-center justify-between bg-surface-container-lowest p-gutter rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.04)] group transition-all active:scale-[0.98] hover:bg-primary-container/5 border border-transparent hover:border-primary-container/20">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">domain</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-background">Saved Properties</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between bg-surface-container-lowest p-gutter rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.04)] group transition-all active:scale-[0.98] hover:bg-primary-container/5 border border-transparent hover:border-primary-container/20">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">history</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-background">Order History</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="bg-primary-container/15 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">3 NEW</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</button>
+<button class="w-full flex items-center justify-between bg-surface-container-lowest p-gutter rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.04)] group transition-all active:scale-[0.98] hover:bg-primary-container/5 border border-transparent hover:border-primary-container/20">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-background">Payment Methods</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+<div class="pt-lg pb-base font-section-title text-section-title text-on-surface-variant px-xs uppercase">Support &amp; Security</div>
+<button class="w-full flex items-center justify-between bg-surface-container-lowest p-gutter rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.04)] group transition-all active:scale-[0.98] hover:bg-primary-container/5 border border-transparent hover:border-primary-container/20">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">help_center</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-background">Help &amp; Support</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between bg-surface-container-lowest p-gutter rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.04)] group transition-all active:scale-[0.98] hover:bg-primary-container/5 border border-transparent hover:border-primary-container/20">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">settings</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-background">Settings</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+<!-- Logout with Error theme -->
+<button class="w-full flex items-center justify-between bg-surface-container-lowest p-gutter rounded-xl shadow-[0px_4px_12px_rgba(55,183,255,0.04)] group transition-all active:scale-[0.98] hover:bg-error/5 mt-xl">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-error/10 text-error flex items-center justify-center">
+<span class="material-symbols-outlined">logout</span>
+</div>
+<span class="font-body-lg text-body-lg text-error font-semibold">Logout</span>
+</div>
+<span class="material-symbols-outlined text-error/40 group-hover:text-error transition-colors">chevron_right</span>
+</button>
+</section>
+<!-- Aesthetic Branding Element -->
+<div class="mt-xl flex flex-col items-center opacity-40 select-none">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center mb-xs">
+<span class="material-symbols-outlined text-primary text-[24px]">auto_awesome</span>
+</div>
+<p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Version 2.4.0 • Refresh &amp; Radiance</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-xs py-base bg-surface-container-lowest shadow-[0px_-4px_12px_rgba(55,183,255,0.08)] border-t border-outline-variant rounded-t-xl pb-safe">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-primary-container/10 transition-transform active:scale-95 px-sm py-xs rounded-lg">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="font-label-sm text-label-sm mt-xs">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-primary-container/10 transition-transform active:scale-95 px-sm py-xs rounded-lg">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+<span class="font-label-sm text-label-sm mt-xs">Schedule</span>
+</button>
+<!-- Elevated Action Button -->
+<button class="relative -top-4 flex flex-col items-center justify-center transition-transform active:scale-95 group">
+<div class="w-14 h-14 bg-secondary-fixed rounded-full shadow-lg flex items-center justify-center text-on-secondary-fixed group-hover:shadow-xl transition-shadow">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+</div>
+<span class="font-label-sm text-label-sm mt-xs text-on-surface-variant font-bold">Book</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-primary-container/10 transition-transform active:scale-95 px-sm py-xs rounded-lg">
+<span class="material-symbols-outlined text-[24px]">chat_bubble</span>
+<span class="font-label-sm text-label-sm mt-xs">Chat</span>
+</button>
+<!-- ACTIVE TAB: Profile -->
+<button class="flex flex-col items-center justify-center text-primary font-bold transition-transform active:scale-95 px-sm py-xs rounded-lg">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm mt-xs">Profile</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction: Ripple effect simulation for primary buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const x = e.clientX - e.target.offsetLeft;
+                const y = e.clientY - e.target.offsetTop;
+                
+                let ripple = document.createElement('span');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                ripple.classList.add('absolute', 'w-0', 'h-0', 'bg-primary-container/20', 'rounded-full', 'pointer-events-none', 'transition-all', 'duration-500', 'ease-out', 'opacity-50');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.style.width = '200%';
+                    ripple.style.height = '200%';
+                    ripple.style.marginLeft = '-100%';
+                    ripple.style.marginTop = '-100%';
+                    ripple.style.opacity = '0';
+                }, 10);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    </script>
+</body></html>
