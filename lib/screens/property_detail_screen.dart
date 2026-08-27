@@ -114,6 +114,27 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             ),
                           ),
                         ],
+                        if ((property.squareFootage ?? 0) > 0) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            '${s.propertySquareFootage}: ${property.squareFootage}',
+                            style: AppFonts.body(
+                              fontSize: 14,
+                              color: AppColors.darkGray,
+                            ),
+                          ),
+                        ],
+                        if ((property.bedrooms ?? 0) > 0 ||
+                            (property.bathrooms ?? 0) > 0) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            '${s.propertyBedrooms}: ${property.bedrooms ?? '—'}  ·  ${s.propertyBathrooms}: ${property.bathrooms ?? '—'}',
+                            style: AppFonts.body(
+                              fontSize: 14,
+                              color: AppColors.darkGray,
+                            ),
+                          ),
+                        ],
                         if ((property.description ?? '').isNotEmpty) ...[
                           const SizedBox(height: 20),
                           _Section(

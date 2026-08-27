@@ -90,10 +90,25 @@ class S {
   String get thisWeek => _t('thisWeek');
   String get futureCleanings => _t('futureCleanings');
   String get recurringCleanings => _t('recurringCleanings');
+  String get scheduleRequests => _t('scheduleRequests');
+  String get scheduleOrders => _t('scheduleOrders');
+  String get subscribeCleaning => _t('subscribeCleaning');
+  String get scheduleDatePending => _t('scheduleDatePending');
+  String get scheduleStatusPending => _t('scheduleStatusPending');
+  String get scheduleStatusScheduled => _t('scheduleStatusScheduled');
+  String get scheduleStatusAccepted => _t('scheduleStatusAccepted');
+  String get scheduleStatusOnTheWay => _t('scheduleStatusOnTheWay');
+  String get scheduleStatusStarted => _t('scheduleStatusStarted');
+  String get scheduleStatusFinished => _t('scheduleStatusFinished');
+  String get scheduleStatusCancelled => _t('scheduleStatusCancelled');
   String get scheduleSectionEmpty => _t('scheduleSectionEmpty');
   String get scheduleLoadFailed => _t('scheduleLoadFailed');
   String get cleaningDetails => _t('cleaningDetails');
   String get orderLoadFailed => _t('orderLoadFailed');
+  String get deleteRequest => _t('deleteRequest');
+  String get deleteRequestTitle => _t('deleteRequestTitle');
+  String get deleteRequestConfirm => _t('deleteRequestConfirm');
+  String get deleteRequestFailed => _t('deleteRequestFailed');
   String get dateLabel => _t('dateLabel');
   String get timeLabel => _t('timeLabel');
   String get paymentStatusLabel => _t('paymentStatusLabel');
@@ -101,19 +116,55 @@ class S {
   String get specialistLabel => _t('specialistLabel');
   String get durationLabel => _t('durationLabel');
   String get instructionsLabel => _t('instructionsLabel');
+  String get propertyLabel => _t('propertyLabel');
+  String get serviceLabel => _t('serviceLabel');
+  String get addonsLabel => _t('addonsLabel');
+  String get notesLabel => _t('notesLabel');
+  String get priceLabel => _t('priceLabel');
   String get statusTimelineLabel => _t('statusTimelineLabel');
+  String get orderVisit => _t('orderVisit');
+  String get orderWindows => _t('orderWindows');
+  String get moreDetails => _t('moreDetails');
+  String get paymentPaid => _t('paymentPaid');
+  String get paymentUnpaid => _t('paymentUnpaid');
+  String get paymentPending => _t('paymentPending');
+  String get paymentFailed => _t('paymentFailed');
+  String get inboxTitle => _t('inboxTitle');
+  String get inboxEmpty => _t('inboxEmpty');
+  String get inboxLoadFailed => _t('inboxLoadFailed');
+  String get inboxMessage => _t('inboxMessage');
+  String get inboxNew => _t('inboxNew');
+  String get inboxRead => _t('inboxRead');
+  String get inboxMarkFailed => _t('inboxMarkFailed');
+  String get inboxConfirm => _t('inboxConfirm');
+  String get inboxDecline => _t('inboxDecline');
+  String get inboxPostpone => _t('inboxPostpone');
+  String get inboxActionFailed => _t('inboxActionFailed');
+  String get orderFinishedTitle => _t('orderFinishedTitle');
+  String get orderFinishedBody => _t('orderFinishedBody');
+  String get ratingSubmitFailed => _t('ratingSubmitFailed');
+  String get cleaningHistoryEmpty => _t('cleaningHistoryEmpty');
+  String get cleaningHistoryLoadFailed => _t('cleaningHistoryLoadFailed');
   String get profileSettingsSection => _t('profileSettingsSection');
   String get supportSecuritySection => _t('supportSecuritySection');
   String get savedProperties => _t('savedProperties');
   String get cleaningHistory => _t('cleaningHistory');
   String get faq => _t('faq');
   String get addProperty => _t('addProperty');
+  String get editProperty => _t('editProperty');
+  String get fixProperty => _t('fixProperty');
   String get saveProperty => _t('saveProperty');
   String get propertiesEmpty => _t('propertiesEmpty');
   String get propertiesLoadFailed => _t('propertiesLoadFailed');
   String get propertyLoadFailed => _t('propertyLoadFailed');
   String get propertySaveFailed => _t('propertySaveFailed');
   String get propertyTitleRequired => _t('propertyTitleRequired');
+  String get propertyHousingRequired => _t('propertyHousingRequired');
+  String get propertyIncomplete => _t('propertyIncomplete');
+  String get propertySquareFootage => _t('propertySquareFootage');
+  String get propertySquareFootageHint => _t('propertySquareFootageHint');
+  String get propertyBedrooms => _t('propertyBedrooms');
+  String get propertyBathrooms => _t('propertyBathrooms');
   String get propertyTitle => _t('propertyTitle');
   String get propertyTitleHint => _t('propertyTitleHint');
   String get propertyMainPhoto => _t('propertyMainPhoto');
@@ -131,6 +182,21 @@ class S {
       _t('bookingStepOf').replaceAll('{current}', '$current').replaceAll('{total}', '$total');
   String get bookingStepProperty => _t('bookingStepProperty');
   String get bookingStepService => _t('bookingStepService');
+  String get bookingStepAddons => _t('bookingStepAddons');
+  String get bookingAddonsTitle => _t('bookingAddonsTitle');
+  String get bookingAddonsSubtitle => _t('bookingAddonsSubtitle');
+  String get bookingAddonsNone => _t('bookingAddonsNone');
+  String get bookingWindowsLabel => _t('bookingWindowsLabel');
+  String get bookingWindowsHint => _t('bookingWindowsHint');
+  String get bookingWindowsRequired => _t('bookingWindowsRequired');
+  String get bookingEstimateTitle => _t('bookingEstimateTitle');
+  String get bookingEstimateNote => _t('bookingEstimateNote');
+  String get bookingEstimatePrice => _t('bookingEstimatePrice');
+  String get bookingEstimateTime => _t('bookingEstimateTime');
+  String get bookingEstimateFailed => _t('bookingEstimateFailed');
+  String get bookingSummaryAddons => _t('bookingSummaryAddons');
+  String bookingHoursValue(String hours) =>
+      _t('bookingHoursValue').replaceAll('{hours}', hours);
   String get bookingStepSchedule => _t('bookingStepSchedule');
   String get bookingStepWishes => _t('bookingStepWishes');
   String get bookingStepPayment => _t('bookingStepPayment');
@@ -150,6 +216,14 @@ class S {
   String get bookingPickDate => _t('bookingPickDate');
   String get bookingPickTime => _t('bookingPickTime');
   String get bookingScheduleDisclaimer => _t('bookingScheduleDisclaimer');
+  String get bookingCheckAvailability => _t('bookingCheckAvailability');
+  String get bookingNoSlots => _t('bookingNoSlots');
+  String get bookingSelectSlot => _t('bookingSelectSlot');
+  String get bookingPreferredStart => _t('bookingPreferredStart');
+  String get bookingPreferredStartHint => _t('bookingPreferredStartHint');
+  String get bookingAvailabilityFailed => _t('bookingAvailabilityFailed');
+  String get bookingHoldFailed => _t('bookingHoldFailed');
+  String get bookingHeld => _t('bookingHeld');
   String get bookingWishesTitle => _t('bookingWishesTitle');
   String get bookingWishesSubtitle => _t('bookingWishesSubtitle');
   String get bookingWishesHint => _t('bookingWishesHint');
@@ -237,10 +311,31 @@ class S {
       'thisWeek': 'THIS WEEK',
       'futureCleanings': 'FUTURE',
       'recurringCleanings': 'RECURRING',
+      'scheduleRequests': 'REQUESTS',
+      'scheduleOrders': 'ORDERS',
+      'subscribeCleaning': 'Subscribe to cleaning',
+      'scheduleDatePending': 'Date to confirm',
+      'scheduleStatusPending': 'Awaiting confirmation',
+      'scheduleStatusScheduled': 'Scheduled',
+      'scheduleStatusAccepted': 'Accepted',
+      'scheduleStatusOnTheWay': 'On the way',
+      'scheduleStatusStarted': 'In progress',
+      'scheduleStatusFinished': 'Finished',
+      'scheduleStatusCancelled': 'Cancelled',
+      'propertyLabel': 'Property',
+      'serviceLabel': 'Service',
+      'addonsLabel': 'Add-ons',
+      'notesLabel': 'Notes',
+      'priceLabel': 'Price',
       'scheduleSectionEmpty': 'Nothing here yet',
       'scheduleLoadFailed': 'Failed to load schedule',
       'cleaningDetails': 'Cleaning details',
       'orderLoadFailed': 'Failed to load cleaning',
+      'deleteRequest': 'DELETE',
+      'deleteRequestTitle': 'Delete request?',
+      'deleteRequestConfirm':
+          'This request will be deleted and the reserved time will become available again.',
+      'deleteRequestFailed': 'Failed to delete the request',
       'dateLabel': 'Date',
       'timeLabel': 'Time',
       'paymentStatusLabel': 'Payment',
@@ -249,18 +344,49 @@ class S {
       'durationLabel': 'Duration (h)',
       'instructionsLabel': 'Instructions',
       'statusTimelineLabel': 'Status timeline',
+      'orderVisit': 'Visit',
+      'orderWindows': 'Windows',
+      'moreDetails': 'More details',
+      'paymentPaid': 'Paid',
+      'paymentUnpaid': 'Unpaid',
+      'paymentPending': 'Payment pending',
+      'paymentFailed': 'Payment failed',
+      'inboxTitle': 'Messages',
+      'inboxEmpty': 'No messages yet',
+      'inboxLoadFailed': 'Failed to load messages',
+      'inboxMessage': 'Message',
+      'inboxNew': 'New',
+      'inboxRead': "I've read it",
+      'inboxMarkFailed': 'Could not mark the message as read',
+      'inboxConfirm': 'Confirm',
+      'inboxDecline': 'I do not confirm',
+      'inboxPostpone': 'Postpone',
+      'inboxActionFailed': 'Could not send the response',
+      'orderFinishedTitle': 'ORDER COMPLETED SUCCESSFULLY',
+      'orderFinishedBody': 'Please rate the cleaning',
+      'ratingSubmitFailed': 'Could not save the rating',
       'profileSettingsSection': 'SETTINGS',
       'supportSecuritySection': 'SUPPORT & SECURITY',
       'savedProperties': 'Saved properties',
       'cleaningHistory': 'Cleaning history',
+      'cleaningHistoryEmpty': 'No completed cleanings yet',
+      'cleaningHistoryLoadFailed': 'Failed to load cleaning history',
       'faq': 'FAQ',
       'addProperty': 'Add property',
+      'editProperty': 'Edit property',
+      'fixProperty': 'Fix',
       'saveProperty': 'Save',
       'propertiesEmpty': 'No saved properties yet',
       'propertiesLoadFailed': 'Failed to load properties',
       'propertyLoadFailed': 'Failed to load property',
       'propertySaveFailed': 'Failed to save property',
       'propertyTitleRequired': 'Title is required',
+      'propertyHousingRequired': 'Square footage, bedrooms and bathrooms are required',
+      'propertyIncomplete': 'Missing square footage, bedrooms or bathrooms.',
+      'propertySquareFootage': 'Square footage',
+      'propertySquareFootageHint': 'Total sqft',
+      'propertyBedrooms': 'Bedrooms',
+      'propertyBathrooms': 'Bathrooms',
       'propertyTitle': 'Title',
       'propertyTitleHint': 'e.g. Home, Office',
       'propertyMainPhoto': 'Main photo',
@@ -277,15 +403,30 @@ class S {
       'bookingStepOf': 'STEP {current} OF {total}',
       'bookingStepProperty': 'Choose property',
       'bookingStepService': 'Choose service',
+      'bookingStepAddons': 'Add-ons',
+      'bookingAddonsTitle': 'Any extras?',
+      'bookingAddonsSubtitle': 'You can select several add-ons or skip this step.',
+      'bookingAddonsNone': 'None selected',
+      'bookingWindowsLabel': 'How many windows?',
+      'bookingWindowsHint': 'Number of windows',
+      'bookingWindowsRequired': 'Enter the number of windows',
+      'bookingEstimateTitle': 'Preliminary estimate',
+      'bookingEstimateNote': 'This is a preliminary estimate. The final price and time may change after a manager reviews the order.',
+      'bookingEstimatePrice': 'Estimated price',
+      'bookingEstimateTime': 'Estimated time',
+      'bookingEstimateFailed': 'Could not calculate the estimate',
+      'bookingSummaryAddons': 'Add-ons',
+      'bookingHoursValue': '{hours} h',
       'bookingStepSchedule': 'Schedule',
       'bookingStepWishes': 'Special wishes',
       'bookingStepPayment': 'Payment',
       'bookingPropertyTitle': 'Where should we clean?',
       'bookingPropertySubtitle': 'Select a saved property or add a new one.',
       'bookingServiceTitle': 'What needs a glow-up?',
-      'bookingServiceSubtitle': 'Select the cleaning service that best fits your needs.',
+      'bookingServiceSubtitle': 'Choose one main cleaning service.',
       'bookingScheduleTitle': 'When should we come?',
-      'bookingScheduleSubtitle': 'Pick a preferred date and time.',
+      'bookingScheduleSubtitle':
+          'Pick a date, then check available time slots.',
       'bookingOneTime': 'One-time',
       'bookingRecurring': 'Recurring',
       'bookingWeekly': 'Weekly',
@@ -297,6 +438,15 @@ class S {
       'bookingPickTime': 'Select time',
       'bookingScheduleDisclaimer':
           'Date and time require confirmation with a manager. A manager will contact you to confirm.',
+      'bookingCheckAvailability': 'Check availability',
+      'bookingNoSlots': 'No free slots for this date',
+      'bookingSelectSlot': 'Available slots',
+      'bookingPreferredStart': 'Preferred start time',
+      'bookingPreferredStartHint':
+          'This window is longer than the job. Choose a start so the visit fits inside it.',
+      'bookingAvailabilityFailed': 'Could not check availability',
+      'bookingHoldFailed': 'Could not reserve this time. Try another slot.',
+      'bookingHeld': 'Time reserved. Finish the booking to keep it.',
       'bookingWishesTitle': 'Any special wishes?',
       'bookingWishesSubtitle': 'Tell us instructions for the cleaning.',
       'bookingWishesHint': 'e.g. focus on kitchen, leave keys under the mat…',
@@ -383,10 +533,31 @@ class S {
       'thisWeek': 'ЦЕЙ ТИЖДЕНЬ',
       'futureCleanings': 'МАЙБУТНІ',
       'recurringCleanings': 'ПЕРІОДИЧНІ',
+      'scheduleRequests': 'ЗАЯВКИ',
+      'scheduleOrders': 'ЗАМОВЛЕННЯ',
+      'subscribeCleaning': 'Підписатися на прибирання',
+      'scheduleDatePending': 'Дату підтвердять',
+      'scheduleStatusPending': 'Очікує підтвердження',
+      'scheduleStatusScheduled': 'Заплановано',
+      'scheduleStatusAccepted': 'Прийнято',
+      'scheduleStatusOnTheWay': 'В дорозі',
+      'scheduleStatusStarted': 'Триває',
+      'scheduleStatusFinished': 'Завершено',
+      'scheduleStatusCancelled': 'Скасовано',
+      'propertyLabel': 'Обʼєкт',
+      'serviceLabel': 'Послуга',
+      'addonsLabel': 'Додатки',
+      'notesLabel': 'Побажання',
+      'priceLabel': 'Ціна',
       'scheduleSectionEmpty': 'Поки порожньо',
       'scheduleLoadFailed': 'Не вдалося завантажити розклад',
       'cleaningDetails': 'Деталі прибирання',
       'orderLoadFailed': 'Не вдалося завантажити прибирання',
+      'deleteRequest': 'ВИДАЛИТИ',
+      'deleteRequestTitle': 'Видалити заявку?',
+      'deleteRequestConfirm':
+          'Заявку буде видалено, а зарезервований час знову стане вільним.',
+      'deleteRequestFailed': 'Не вдалося видалити заявку',
       'dateLabel': 'Дата',
       'timeLabel': 'Час',
       'paymentStatusLabel': 'Оплата',
@@ -395,18 +566,49 @@ class S {
       'durationLabel': 'Тривалість (год)',
       'instructionsLabel': 'Інструкції',
       'statusTimelineLabel': 'Історія статусів',
+      'orderVisit': 'Візит',
+      'orderWindows': 'Вікна',
+      'moreDetails': 'Докладніше',
+      'paymentPaid': 'Оплачено',
+      'paymentUnpaid': 'Не оплачено',
+      'paymentPending': 'Очікує оплати',
+      'paymentFailed': 'Помилка оплати',
+      'inboxTitle': 'Повідомлення',
+      'inboxEmpty': 'Повідомлень ще немає',
+      'inboxLoadFailed': 'Не вдалося завантажити повідомлення',
+      'inboxMessage': 'Повідомлення',
+      'inboxNew': 'Нове',
+      'inboxRead': 'Прочитав',
+      'inboxMarkFailed': 'Не вдалося позначити повідомлення прочитаним',
+      'inboxConfirm': 'Підтверджую',
+      'inboxDecline': 'Не підтверджую',
+      'inboxPostpone': 'Відкласти',
+      'inboxActionFailed': 'Не вдалося надіслати відповідь',
+      'orderFinishedTitle': 'ЗАМОВЛЕННЯ УСПІШНО ВИКОНАНО',
+      'orderFinishedBody': 'Будь ласка, оцініть прибирання',
+      'ratingSubmitFailed': 'Не вдалося зберегти оцінку',
       'profileSettingsSection': 'НАЛАШТУВАННЯ',
       'supportSecuritySection': 'ПІДТРИМКА ТА БЕЗПЕКА',
       'savedProperties': 'Збережені обʼєкти',
       'cleaningHistory': 'Історія прибирань',
+      'cleaningHistoryEmpty': 'Завершених прибирань ще немає',
+      'cleaningHistoryLoadFailed': 'Не вдалося завантажити історію',
       'faq': 'FAQ',
       'addProperty': 'Додати обʼєкт',
+      'editProperty': 'Редагувати обʼєкт',
+      'fixProperty': 'Виправити',
       'saveProperty': 'Зберегти',
       'propertiesEmpty': 'Поки немає збережених обʼєктів',
       'propertiesLoadFailed': 'Не вдалося завантажити обʼєкти',
       'propertyLoadFailed': 'Не вдалося завантажити обʼєкт',
       'propertySaveFailed': 'Не вдалося зберегти обʼєкт',
       'propertyTitleRequired': 'Вкажіть назву',
+      'propertyHousingRequired': 'Вкажіть метраж, кількість спалень і ванних',
+      'propertyIncomplete': 'Немає метражу, спалень або ванних.',
+      'propertySquareFootage': 'Метраж (sqft)',
+      'propertySquareFootageHint': 'Загальна площа',
+      'propertyBedrooms': 'Спальні',
+      'propertyBathrooms': 'Ванні',
       'propertyTitle': 'Назва',
       'propertyTitleHint': 'напр. Дім, Офіс',
       'propertyMainPhoto': 'Головне фото',
@@ -423,15 +625,30 @@ class S {
       'bookingStepOf': 'КРОК {current} З {total}',
       'bookingStepProperty': 'Обʼєкт уборки',
       'bookingStepService': 'Тип уборки',
+      'bookingStepAddons': 'Доп. послуги',
+      'bookingAddonsTitle': 'Потрібні допи?',
+      'bookingAddonsSubtitle': 'Можна обрати кілька послуг або пропустити крок.',
+      'bookingAddonsNone': 'Не обрано',
+      'bookingWindowsLabel': 'Скільки вікон?',
+      'bookingWindowsHint': 'Кількість вікон',
+      'bookingWindowsRequired': 'Вкажіть кількість вікон',
+      'bookingEstimateTitle': 'Попередній розрахунок',
+      'bookingEstimateNote': 'Це попередній розрахунок. Фінальні ціна і час можуть змінитися після перевірки менеджером.',
+      'bookingEstimatePrice': 'Орієнтовна ціна',
+      'bookingEstimateTime': 'Орієнтовний час',
+      'bookingEstimateFailed': 'Не вдалося розрахувати кошторис',
+      'bookingSummaryAddons': 'Доп. послуги',
+      'bookingHoursValue': '{hours} год',
       'bookingStepSchedule': 'Розклад',
       'bookingStepWishes': 'Побажання',
       'bookingStepPayment': 'Оплата',
       'bookingPropertyTitle': 'Де прибирати?',
       'bookingPropertySubtitle': 'Оберіть збережений обʼєкт або додайте новий.',
       'bookingServiceTitle': 'Яка уборка потрібна?',
-      'bookingServiceSubtitle': 'Оберіть тип послуги.',
+      'bookingServiceSubtitle': 'Оберіть одну основну послугу.',
       'bookingScheduleTitle': 'Коли приїхати?',
-      'bookingScheduleSubtitle': 'Оберіть бажану дату та час.',
+      'bookingScheduleSubtitle':
+          'Оберіть дату, потім перевірте вільні слоти.',
       'bookingOneTime': 'Разова',
       'bookingRecurring': 'Періодична',
       'bookingWeekly': 'Щотижня',
@@ -443,6 +660,15 @@ class S {
       'bookingPickTime': 'Оберіть час',
       'bookingScheduleDisclaimer':
           'Дата і час потребують узгодження з менеджером. Менеджер звʼяжеться з вами для підтвердження.',
+      'bookingCheckAvailability': 'Перевірити доступність',
+      'bookingNoSlots': 'На цю дату немає вільних слотів',
+      'bookingSelectSlot': 'Вільні слоти',
+      'bookingPreferredStart': 'Бажаний час початку',
+      'bookingPreferredStartHint':
+          'Вільне вікно довше за тривалість уборки. Оберіть старт так, щоб візит вмістився в нього.',
+      'bookingAvailabilityFailed': 'Не вдалося перевірити доступність',
+      'bookingHoldFailed': 'Не вдалося зарезервувати час. Спробуйте інший слот.',
+      'bookingHeld': 'Час зарезервовано. Завершіть заявку, щоб залишити його.',
       'bookingWishesTitle': 'Особливі побажання?',
       'bookingWishesSubtitle': 'Вкажіть інструкції до прибирання.',
       'bookingWishesHint': 'напр. більше уваги кухні, ключі під килимком…',
@@ -529,10 +755,31 @@ class S {
       'thisWeek': 'ESTA SEMANA',
       'futureCleanings': 'FUTURAS',
       'recurringCleanings': 'PERIÓDICAS',
+      'scheduleRequests': 'SOLICITUDES',
+      'scheduleOrders': 'PEDIDOS',
+      'subscribeCleaning': 'Suscribirse a la limpieza',
+      'scheduleDatePending': 'Fecha por confirmar',
+      'scheduleStatusPending': 'Pendiente de confirmación',
+      'scheduleStatusScheduled': 'Programada',
+      'scheduleStatusAccepted': 'Aceptada',
+      'scheduleStatusOnTheWay': 'En camino',
+      'scheduleStatusStarted': 'En curso',
+      'scheduleStatusFinished': 'Finalizada',
+      'scheduleStatusCancelled': 'Cancelada',
+      'propertyLabel': 'Propiedad',
+      'serviceLabel': 'Servicio',
+      'addonsLabel': 'Extras',
+      'notesLabel': 'Notas',
+      'priceLabel': 'Precio',
       'scheduleSectionEmpty': 'Aún vacío',
       'scheduleLoadFailed': 'No se pudo cargar el horario',
       'cleaningDetails': 'Detalles de la limpieza',
       'orderLoadFailed': 'No se pudo cargar la limpieza',
+      'deleteRequest': 'ELIMINAR',
+      'deleteRequestTitle': '¿Eliminar solicitud?',
+      'deleteRequestConfirm':
+          'La solicitud se eliminará y el horario reservado volverá a estar disponible.',
+      'deleteRequestFailed': 'No se pudo eliminar la solicitud',
       'dateLabel': 'Fecha',
       'timeLabel': 'Hora',
       'paymentStatusLabel': 'Pago',
@@ -541,18 +788,49 @@ class S {
       'durationLabel': 'Duración (h)',
       'instructionsLabel': 'Instrucciones',
       'statusTimelineLabel': 'Historial de estados',
+      'orderVisit': 'Visita',
+      'orderWindows': 'Ventanas',
+      'moreDetails': 'Más detalles',
+      'paymentPaid': 'Pagado',
+      'paymentUnpaid': 'Sin pagar',
+      'paymentPending': 'Pago pendiente',
+      'paymentFailed': 'Pago fallido',
+      'inboxTitle': 'Mensajes',
+      'inboxEmpty': 'Aún no hay mensajes',
+      'inboxLoadFailed': 'No se pudieron cargar los mensajes',
+      'inboxMessage': 'Mensaje',
+      'inboxNew': 'Nuevo',
+      'inboxRead': 'Ya lo leí',
+      'inboxMarkFailed': 'No se pudo marcar el mensaje como leído',
+      'inboxConfirm': 'Confirmo',
+      'inboxDecline': 'No confirmo',
+      'inboxPostpone': 'Posponer',
+      'inboxActionFailed': 'No se pudo enviar la respuesta',
+      'orderFinishedTitle': 'PEDIDO COMPLETADO CON ÉXITO',
+      'orderFinishedBody': 'Por favor, valora la limpieza',
+      'ratingSubmitFailed': 'No se pudo guardar la valoración',
       'profileSettingsSection': 'AJUSTES',
       'supportSecuritySection': 'SOPORTE Y SEGURIDAD',
       'savedProperties': 'Propiedades guardadas',
       'cleaningHistory': 'Historial de limpiezas',
+      'cleaningHistoryEmpty': 'Aún no hay limpiezas completadas',
+      'cleaningHistoryLoadFailed': 'No se pudo cargar el historial',
       'faq': 'FAQ',
       'addProperty': 'Añadir propiedad',
+      'editProperty': 'Editar propiedad',
+      'fixProperty': 'Corregir',
       'saveProperty': 'Guardar',
       'propertiesEmpty': 'Aún no hay propiedades guardadas',
       'propertiesLoadFailed': 'No se pudieron cargar las propiedades',
       'propertyLoadFailed': 'No se pudo cargar la propiedad',
       'propertySaveFailed': 'No se pudo guardar la propiedad',
       'propertyTitleRequired': 'El título es obligatorio',
+      'propertyHousingRequired': 'Se requieren pies cuadrados, habitaciones y baños',
+      'propertyIncomplete': 'Faltan el metraje, las habitaciones o los baños.',
+      'propertySquareFootage': 'Metraje (sqft)',
+      'propertySquareFootageHint': 'Área total',
+      'propertyBedrooms': 'Habitaciones',
+      'propertyBathrooms': 'Baños',
       'propertyTitle': 'Título',
       'propertyTitleHint': 'p. ej. Casa, Oficina',
       'propertyMainPhoto': 'Foto principal',
@@ -569,15 +847,30 @@ class S {
       'bookingStepOf': 'PASO {current} DE {total}',
       'bookingStepProperty': 'Propiedad',
       'bookingStepService': 'Servicio',
+      'bookingStepAddons': 'Extras',
+      'bookingAddonsTitle': '¿Quieres extras?',
+      'bookingAddonsSubtitle': 'Puedes elegir varios extras o saltar este paso.',
+      'bookingAddonsNone': 'Ninguno',
+      'bookingWindowsLabel': '¿Cuántas ventanas?',
+      'bookingWindowsHint': 'Número de ventanas',
+      'bookingWindowsRequired': 'Indica el número de ventanas',
+      'bookingEstimateTitle': 'Estimación preliminar',
+      'bookingEstimateNote': 'Esta es una estimación preliminar. El precio y el tiempo finales pueden cambiar después de la revisión del gerente.',
+      'bookingEstimatePrice': 'Precio estimado',
+      'bookingEstimateTime': 'Tiempo estimado',
+      'bookingEstimateFailed': 'No se pudo calcular la estimación',
+      'bookingSummaryAddons': 'Extras',
+      'bookingHoursValue': '{hours} h',
       'bookingStepSchedule': 'Horario',
       'bookingStepWishes': 'Deseos',
       'bookingStepPayment': 'Pago',
       'bookingPropertyTitle': '¿Dónde limpiamos?',
       'bookingPropertySubtitle': 'Elige una propiedad guardada o añade una nueva.',
       'bookingServiceTitle': '¿Qué servicio necesitas?',
-      'bookingServiceSubtitle': 'Selecciona el tipo de limpieza.',
+      'bookingServiceSubtitle': 'Elige un solo servicio principal.',
       'bookingScheduleTitle': '¿Cuándo vamos?',
-      'bookingScheduleSubtitle': 'Elige fecha y hora preferidas.',
+      'bookingScheduleSubtitle':
+          'Elige una fecha y comprueba los huecos disponibles.',
       'bookingOneTime': 'Única',
       'bookingRecurring': 'Periódica',
       'bookingWeekly': 'Semanal',
@@ -589,6 +882,15 @@ class S {
       'bookingPickTime': 'Elegir hora',
       'bookingScheduleDisclaimer':
           'La fecha y hora requieren confirmación del gerente. Un gerente te contactará para confirmar.',
+      'bookingCheckAvailability': 'Comprobar disponibilidad',
+      'bookingNoSlots': 'No hay huecos libres para esta fecha',
+      'bookingSelectSlot': 'Huecos disponibles',
+      'bookingPreferredStart': 'Hora de inicio preferida',
+      'bookingPreferredStartHint':
+          'La ventana es más larga que el trabajo. Elige un inicio para que la visita quepa.',
+      'bookingAvailabilityFailed': 'No se pudo comprobar la disponibilidad',
+      'bookingHoldFailed': 'No se pudo reservar esta hora. Prueba otro hueco.',
+      'bookingHeld': 'Hora reservada. Termina la reserva para conservarla.',
       'bookingWishesTitle': '¿Deseos especiales?',
       'bookingWishesSubtitle': 'Escribe instrucciones para la limpieza.',
       'bookingWishesHint': 'p. ej. más atención a la cocina…',
@@ -675,10 +977,31 @@ class S {
       'thisWeek': 'ЭТА НЕДЕЛЯ',
       'futureCleanings': 'БУДУЩИЕ',
       'recurringCleanings': 'ПЕРИОДИЧЕСКИЕ',
+      'scheduleRequests': 'ЗАЯВКИ',
+      'scheduleOrders': 'ЗАКАЗЫ',
+      'subscribeCleaning': 'Подписаться на уборку',
+      'scheduleDatePending': 'Дату подтвердят',
+      'scheduleStatusPending': 'Ожидает подтверждения',
+      'scheduleStatusScheduled': 'Запланирован',
+      'scheduleStatusAccepted': 'Принят',
+      'scheduleStatusOnTheWay': 'В пути',
+      'scheduleStatusStarted': 'В работе',
+      'scheduleStatusFinished': 'Завершён',
+      'scheduleStatusCancelled': 'Отменён',
+      'propertyLabel': 'Объект',
+      'serviceLabel': 'Услуга',
+      'addonsLabel': 'Допы',
+      'notesLabel': 'Пожелания',
+      'priceLabel': 'Цена',
       'scheduleSectionEmpty': 'Пока пусто',
       'scheduleLoadFailed': 'Не удалось загрузить расписание',
       'cleaningDetails': 'Детали уборки',
       'orderLoadFailed': 'Не удалось загрузить уборку',
+      'deleteRequest': 'УДАЛИТЬ',
+      'deleteRequestTitle': 'Удалить заявку?',
+      'deleteRequestConfirm':
+          'Заявка будет удалена, а зарезервированное время снова станет свободным.',
+      'deleteRequestFailed': 'Не удалось удалить заявку',
       'dateLabel': 'Дата',
       'timeLabel': 'Время',
       'paymentStatusLabel': 'Оплата',
@@ -687,18 +1010,49 @@ class S {
       'durationLabel': 'Длительность (ч)',
       'instructionsLabel': 'Инструкции',
       'statusTimelineLabel': 'История статусов',
+      'orderVisit': 'Визит',
+      'orderWindows': 'Окна',
+      'moreDetails': 'Подробнее',
+      'paymentPaid': 'Оплачено',
+      'paymentUnpaid': 'Не оплачено',
+      'paymentPending': 'Ожидает оплаты',
+      'paymentFailed': 'Ошибка оплаты',
+      'inboxTitle': 'Сообщения',
+      'inboxEmpty': 'Сообщений пока нет',
+      'inboxLoadFailed': 'Не удалось загрузить сообщения',
+      'inboxMessage': 'Сообщение',
+      'inboxNew': 'Новое',
+      'inboxRead': 'Прочитал',
+      'inboxMarkFailed': 'Не удалось отметить сообщение прочитанным',
+      'inboxConfirm': 'Подтверждаю',
+      'inboxDecline': 'Не подтверждаю',
+      'inboxPostpone': 'Отложить',
+      'inboxActionFailed': 'Не удалось отправить ответ',
+      'orderFinishedTitle': 'ЗАКАЗ УСПЕШНО ВЫПОЛНЕН',
+      'orderFinishedBody': 'Пожалуйста, оцените уборку',
+      'ratingSubmitFailed': 'Не удалось сохранить оценку',
       'profileSettingsSection': 'НАСТРОЙКИ',
       'supportSecuritySection': 'ПОДДЕРЖКА И БЕЗОПАСНОСТЬ',
       'savedProperties': 'Сохранённые объекты',
       'cleaningHistory': 'История уборок',
+      'cleaningHistoryEmpty': 'Завершённых уборок пока нет',
+      'cleaningHistoryLoadFailed': 'Не удалось загрузить историю',
       'faq': 'FAQ',
       'addProperty': 'Добавить объект',
+      'editProperty': 'Редактировать объект',
+      'fixProperty': 'Исправить',
       'saveProperty': 'Сохранить',
       'propertiesEmpty': 'Пока нет сохранённых объектов',
       'propertiesLoadFailed': 'Не удалось загрузить объекты',
       'propertyLoadFailed': 'Не удалось загрузить объект',
       'propertySaveFailed': 'Не удалось сохранить объект',
       'propertyTitleRequired': 'Укажите название',
+      'propertyHousingRequired': 'Укажите метраж, количество спален и ванных',
+      'propertyIncomplete': 'Нет метража, спален или ванных.',
+      'propertySquareFootage': 'Метраж (sqft)',
+      'propertySquareFootageHint': 'Общая площадь',
+      'propertyBedrooms': 'Спальни',
+      'propertyBathrooms': 'Ванные',
       'propertyTitle': 'Название',
       'propertyTitleHint': 'например, Дом, Офис',
       'propertyMainPhoto': 'Главное фото',
@@ -715,15 +1069,30 @@ class S {
       'bookingStepOf': 'ШАГ {current} ИЗ {total}',
       'bookingStepProperty': 'Объект уборки',
       'bookingStepService': 'Тип уборки',
+      'bookingStepAddons': 'Доп. услуги',
+      'bookingAddonsTitle': 'Нужны допы?',
+      'bookingAddonsSubtitle': 'Можно выбрать несколько услуг или пропустить шаг.',
+      'bookingAddonsNone': 'Не выбрано',
+      'bookingWindowsLabel': 'Сколько окон?',
+      'bookingWindowsHint': 'Количество окон',
+      'bookingWindowsRequired': 'Укажите количество окон',
+      'bookingEstimateTitle': 'Предварительный расчёт',
+      'bookingEstimateNote': 'Это предварительный расчёт. Итоговые цена и время могут измениться после проверки менеджером.',
+      'bookingEstimatePrice': 'Ориентировочная цена',
+      'bookingEstimateTime': 'Ориентировочное время',
+      'bookingEstimateFailed': 'Не удалось посчитать смету',
+      'bookingSummaryAddons': 'Доп. услуги',
+      'bookingHoursValue': '{hours} ч',
       'bookingStepSchedule': 'Расписание',
       'bookingStepWishes': 'Пожелания',
       'bookingStepPayment': 'Оплата',
       'bookingPropertyTitle': 'Где убирать?',
       'bookingPropertySubtitle': 'Выберите сохранённый объект или добавьте новый.',
       'bookingServiceTitle': 'Какая уборка нужна?',
-      'bookingServiceSubtitle': 'Выберите тип услуги.',
+      'bookingServiceSubtitle': 'Выберите одну основную услугу.',
       'bookingScheduleTitle': 'Когда приехать?',
-      'bookingScheduleSubtitle': 'Выберите желаемые дату и время.',
+      'bookingScheduleSubtitle':
+          'Выберите дату, затем проверьте свободные слоты.',
       'bookingOneTime': 'Разовая',
       'bookingRecurring': 'Периодическая',
       'bookingWeekly': 'Каждую неделю',
@@ -735,6 +1104,15 @@ class S {
       'bookingPickTime': 'Выберите время',
       'bookingScheduleDisclaimer':
           'Дата и время требуют согласования с менеджером. Для подтверждения с вами свяжется менеджер.',
+      'bookingCheckAvailability': 'Проверить доступность',
+      'bookingNoSlots': 'На эту дату нет свободных слотов',
+      'bookingSelectSlot': 'Свободные слоты',
+      'bookingPreferredStart': 'Предпочтительное время старта',
+      'bookingPreferredStartHint':
+          'Свободное окно длиннее уборки. Выберите старт так, чтобы визит поместился в него.',
+      'bookingAvailabilityFailed': 'Не удалось проверить доступность',
+      'bookingHoldFailed': 'Не удалось зарезервировать время. Выберите другой слот.',
+      'bookingHeld': 'Время зарезервировано. Завершите заявку, чтобы сохранить слот.',
       'bookingWishesTitle': 'Особые пожелания?',
       'bookingWishesSubtitle': 'Укажите инструкции к уборке.',
       'bookingWishesHint': 'например, больше внимания кухне, ключи под ковриком…',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wow_cleaning/l10n/app_locales.dart';
+import 'package:wow_cleaning/services/inbox_api.dart';
 
 class LocaleController extends ChangeNotifier {
   LocaleController._();
@@ -22,6 +23,9 @@ class LocaleController extends ChangeNotifier {
     // No saved choice → English. Never follow device locale.
     _locale = saved == null ? defaultLocale : AppLocales.fromCode(saved);
     notifyListeners();
+    try {
+      await InboxApi().syncLocale(AppLocales.codeOf(_locale));
+    } catch (_) {}
   }
 
   Future<void> setLocale(Locale locale) async {
@@ -30,5 +34,10 @@ class LocaleController extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefsKey, AppLocales.codeOf(locale));
+    try {
+      await InboxApi().syncLocale(AppLocales.codeOf(locale));
+    } catch (_) {
+      // Locale stays local if the profile sync is unavailable.
+    }
   }
 }

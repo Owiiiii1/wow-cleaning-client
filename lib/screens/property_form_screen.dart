@@ -8,7 +8,9 @@ import 'package:wow_cleaning/services/properties_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
 
 class PropertyFormScreen extends StatefulWidget {
-  const PropertyFormScreen({super.key});
+  const PropertyFormScreen({super.key, this.propertyId});
+
+  final int? propertyId;
 
   @override
   State<PropertyFormScreen> createState() => _PropertyFormScreenState();
@@ -19,18 +21,66 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
   final ImagePicker _picker = ImagePicker();
   final _titleController = TextEditingController();
   final _addressController = TextEditingController();
+  final _sqftController = TextEditingController();
+  final _bedroomsController = TextEditingController();
+  final _bathroomsController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _entryController = TextEditingController();
 
   String? _mainImagePath;
   final List<String> _additionalPaths = [];
   bool _saving = false;
+  bool _loading = false;
   String? _error;
+
+  bool get _isEditing => widget.propertyId != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isEditing) {
+      _loadExisting();
+    }
+  }
+
+  Future<void> _loadExisting() async {
+    final id = widget.propertyId;
+    if (id == null) return;
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final property = await _api.show(id);
+      if (!mounted) return;
+      _titleController.text = property.title;
+      _addressController.text = property.address ?? '';
+      _sqftController.text = (property.squareFootage ?? 0) > 0
+          ? '${property.squareFootage}'
+          : '';
+      _bedroomsController.text =
+          (property.bedrooms ?? 0) > 0 ? '${property.bedrooms}' : '';
+      _bathroomsController.text =
+          (property.bathrooms ?? 0) > 0 ? '${property.bathrooms}' : '';
+      _descriptionController.text = property.description ?? '';
+      _entryController.text = property.entryInstructions ?? '';
+      setState(() => _loading = false);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = S.current.propertyLoadFailed;
+      });
+    }
+  }
 
   @override
   void dispose() {
     _titleController.dispose();
     _addressController.dispose();
+    _sqftController.dispose();
+    _bedroomsController.dispose();
+    _bathroomsController.dispose();
     _descriptionController.dispose();
     _entryController.dispose();
     super.dispose();
@@ -64,8 +114,15 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
 
   Future<void> _save() async {
     final title = _titleController.text.trim();
+    final sqft = int.tryParse(_sqftController.text.trim());
+    final bedrooms = int.tryParse(_bedroomsController.text.trim());
+    final bathrooms = int.tryParse(_bathroomsController.text.trim());
     if (title.isEmpty) {
       setState(() => _error = S.current.propertyTitleRequired);
+      return;
+    }
+    if (sqft == null || sqft < 1 || bedrooms == null || bedrooms < 1 || bathrooms == null || bathrooms < 1) {
+      setState(() => _error = S.current.propertyHousingRequired);
       return;
     }
 
@@ -75,20 +132,40 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
     });
 
     try {
-      await _api.create(
-        title: title,
-        address: _addressController.text.trim().isEmpty
-            ? null
-            : _addressController.text.trim(),
-        description: _descriptionController.text.trim().isEmpty
-            ? null
-            : _descriptionController.text.trim(),
-        entryInstructions: _entryController.text.trim().isEmpty
-            ? null
-            : _entryController.text.trim(),
-        mainImagePath: _mainImagePath,
-        additionalImagePaths: List<String>.from(_additionalPaths),
-      );
+      final address = _addressController.text.trim().isEmpty
+          ? null
+          : _addressController.text.trim();
+      final description = _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim();
+      final entryInstructions = _entryController.text.trim().isEmpty
+          ? null
+          : _entryController.text.trim();
+
+      if (_isEditing) {
+        await _api.update(
+          id: widget.propertyId!,
+          title: title,
+          squareFootage: sqft,
+          bedrooms: bedrooms,
+          bathrooms: bathrooms,
+          address: address,
+          description: description,
+          entryInstructions: entryInstructions,
+        );
+      } else {
+        await _api.create(
+          title: title,
+          squareFootage: sqft,
+          bedrooms: bedrooms,
+          bathrooms: bathrooms,
+          address: address,
+          description: description,
+          entryInstructions: entryInstructions,
+          mainImagePath: _mainImagePath,
+          additionalImagePaths: List<String>.from(_additionalPaths),
+        );
+      }
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } on ApiException catch (e) {
@@ -117,11 +194,15 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
         elevation: 0,
         foregroundColor: AppColors.darkGray,
         title: Text(
-          s.addProperty,
+          _isEditing ? s.editProperty : s.addProperty,
           style: AppFonts.headline(fontSize: 18, color: AppColors.darkGray),
         ),
       ),
-      body: ListView(
+      body: _loading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.pictonBlue),
+            )
+          : ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         children: [
           _FieldLabel(s.propertyTitle),
@@ -131,14 +212,16 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
             textCapitalization: TextCapitalization.sentences,
             decoration: _inputDecoration(s.propertyTitleHint),
           ),
-          const SizedBox(height: 18),
-          _FieldLabel(s.propertyMainPhoto),
-          const SizedBox(height: 8),
-          _ImagePickerBox(
-            path: _mainImagePath,
-            onTap: _saving ? null : _pickMain,
-            placeholder: s.propertyPickMainPhoto,
-          ),
+          if (!_isEditing) ...[
+            const SizedBox(height: 18),
+            _FieldLabel(s.propertyMainPhoto),
+            const SizedBox(height: 8),
+            _ImagePickerBox(
+              path: _mainImagePath,
+              onTap: _saving ? null : _pickMain,
+              placeholder: s.propertyPickMainPhoto,
+            ),
+          ],
           const SizedBox(height: 18),
           _FieldLabel(s.propertyAddress),
           const SizedBox(height: 8),
@@ -146,6 +229,48 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
             controller: _addressController,
             textCapitalization: TextCapitalization.sentences,
             decoration: _inputDecoration(s.propertyAddressHint),
+          ),
+          const SizedBox(height: 18),
+          _FieldLabel(s.propertySquareFootage),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _sqftController,
+            keyboardType: TextInputType.number,
+            decoration: _inputDecoration(s.propertySquareFootageHint),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _FieldLabel(s.propertyBedrooms),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _bedroomsController,
+                      keyboardType: TextInputType.number,
+                      decoration: _inputDecoration('1'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _FieldLabel(s.propertyBathrooms),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _bathroomsController,
+                      keyboardType: TextInputType.number,
+                      decoration: _inputDecoration('1'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 18),
           _FieldLabel(s.propertyDescription),
@@ -157,6 +282,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
             textCapitalization: TextCapitalization.sentences,
             decoration: _inputDecoration(s.propertyDescriptionHint),
           ),
+          if (!_isEditing) ...[
           const SizedBox(height: 18),
           _FieldLabel(s.propertyAdditionalPhotos),
           const SizedBox(height: 8),
@@ -224,6 +350,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                 ),
             ],
           ),
+          ],
           const SizedBox(height: 18),
           _FieldLabel(s.propertyEntryInstructions),
           const SizedBox(height: 8),

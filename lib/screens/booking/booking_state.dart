@@ -1,3 +1,4 @@
+import 'package:wow_cleaning/services/booking_api.dart';
 import 'package:wow_cleaning/services/properties_api.dart';
 import 'package:wow_cleaning/services/services_api.dart';
 
@@ -8,16 +9,55 @@ enum BookingRecurrence { weekly, biweekly, monthly }
 class BookingState {
   ClientPropertyItem? property;
   CleaningServiceItem? service;
+  final List<CleaningServiceItem> addons = [];
+  int windowCount = 0;
+  BookingQuote? quote;
   BookingScheduleType scheduleType = BookingScheduleType.oneTime;
   BookingRecurrence recurrence = BookingRecurrence.weekly;
   DateTime? date;
   TimeOfDayValue? time;
+  int? holdId;
+  AvailabilityWindow? selectedWindow;
+  List<AvailabilityWindow> windows = [];
+  bool availabilityChecked = false;
   String notes = '';
 
-  bool get canGoStep1 => property != null;
-  bool get canGoStep2 => service != null;
-  bool get canGoStep3 => date != null && time != null;
-  bool get canGoStep4 => true;
+  bool get canGoProperty =>
+      property != null && property!.hasHousingParams;
+  bool get canGoService => service != null;
+  bool get canGoAddons =>
+      !hasWindowCleaning || windowCount > 0;
+  bool get canGoSchedule =>
+      date != null &&
+      holdId != null &&
+      selectedWindow != null &&
+      time != null;
+
+  void clearAvailability() {
+    windows = [];
+    selectedWindow = null;
+    holdId = null;
+    time = null;
+    availabilityChecked = false;
+  }
+  bool get canGoWishes => true;
+
+  bool get hasWindowCleaning =>
+      addons.any((item) => item.isWindowCleaning);
+
+  List<int> get addonIds => addons.map((item) => item.id).toList();
+
+  void toggleAddon(CleaningServiceItem item) {
+    final index = addons.indexWhere((addon) => addon.id == item.id);
+    if (index >= 0) {
+      addons.removeAt(index);
+      if (item.isWindowCleaning) {
+        windowCount = 0;
+      }
+      return;
+    }
+    addons.add(item);
+  }
 
   String get scheduleTypeApi =>
       scheduleType == BookingScheduleType.oneTime ? 'one_time' : 'recurring';
@@ -54,4 +94,42 @@ class TimeOfDayValue {
 
   final int hour;
   final int minute;
+
+  int get totalMinutes => hour * 60 + minute;
+
+  TimeOfDayValue addMinutes(int minutes) {
+    final total = totalMinutes + minutes;
+    return TimeOfDayValue(hour: total ~/ 60, minute: total % 60);
+  }
+
+  TimeOfDayValue ceilToTenMinutes() {
+    if (minute % 10 == 0) {
+      return this;
+    }
+    return addMinutes(10 - (minute % 10));
+  }
+
+  TimeOfDayValue ceilToThirtyMinutes() {
+    final remainder = totalMinutes % 30;
+    if (remainder == 0) {
+      return this;
+    }
+    return addMinutes(30 - remainder);
+  }
+
+  String get hhmm {
+    final h = hour.toString().padLeft(2, '0');
+    final m = minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
+  static TimeOfDayValue? tryParse(String? raw) {
+    if (raw == null || raw.length < 4) return null;
+    final match = RegExp(r'^(\d{1,2}):(\d{2})').firstMatch(raw);
+    if (match == null) return null;
+    return TimeOfDayValue(
+      hour: int.parse(match.group(1)!),
+      minute: int.parse(match.group(2)!),
+    );
+  }
 }

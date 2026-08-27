@@ -16,9 +16,11 @@ class AppHeader extends StatelessWidget {
   const AppHeader({
     super.key,
     this.onBellTap,
+    this.hasUnread = false,
   });
 
   final VoidCallback? onBellTap;
+  final bool hasUnread;
 
   Future<void> _onMenuSelected(
     BuildContext context,
@@ -161,10 +163,28 @@ class AppHeader extends StatelessWidget {
                             minWidth: 40,
                             minHeight: 40,
                           ),
-                          icon: Icon(
-                            Icons.notifications_none_rounded,
-                            size: HeaderLayout.bellIconSize,
-                            color: AppColors.darkLiver,
+                          icon: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Icon(
+                                Icons.notifications_none_rounded,
+                                size: HeaderLayout.bellIconSize,
+                                color: AppColors.darkLiver,
+                              ),
+                              if (hasUnread)
+                                Positioned(
+                                  right: -2,
+                                  top: -2,
+                                  child: Text(
+                                    '!',
+                                    style: AppFonts.montserrat(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: const Color(0xFFE53935),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                       ],

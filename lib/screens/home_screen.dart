@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/l10n/locale_controller.dart';
 import 'package:wow_cleaning/screens/news_detail_screen.dart';
+import 'package:wow_cleaning/screens/order_detail_screen.dart';
 import 'package:wow_cleaning/services/home_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
+import 'package:wow_cleaning/widgets/order_mini_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     required this.loginData,
     this.onBookNewCleaning,
+    this.isActive = true,
+    this.refreshTick = 0,
   });
 
   final Map<String, dynamic> loginData;
   final VoidCallback? onBookNewCleaning;
+  final bool isActive;
+  final int refreshTick;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,49 +50,55 @@ class _HomeScreenState extends State<HomeScreen> {
     _load();
   }
 
-  Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive &&
+        (widget.refreshTick != oldWidget.refreshTick || !oldWidget.isActive)) {
+      _load(silent: _data != null);
+    }
+  }
+
+  Future<void> _load({bool silent = false}) async {
+    if (!silent || _data == null) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
     try {
       final data = await _api.fetchHome();
       if (!mounted) return;
       setState(() {
         _data = data;
         _loading = false;
+        _error = null;
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = S.current.homeLoadFailed;
-        _data ??= HomeData(
-          userName: _fallbackName,
-          news: const [],
-        );
+        if (!silent || _data == null) {
+          _error = S.current.homeLoadFailed;
+          _data ??= HomeData(
+            userName: _fallbackName,
+            news: const [],
+          );
+        }
       });
     }
   }
 
-  String _formatTime(String? value) {
-    if (value == null || value.isEmpty) return '';
-    final parts = value.split(':');
-    if (parts.length >= 2) {
-      return '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
-    }
-    return value;
-  }
-
-  String _formatDate(String? value) {
-    if (value == null || value.isEmpty) return '';
-    try {
-      final dt = DateTime.parse(value);
-      String two(int n) => n.toString().padLeft(2, '0');
-      return '${two(dt.day)}.${two(dt.month)}.${dt.year}';
-    } catch (_) {
-      return value;
-    }
+  void _openOrder(int orderId) {
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(
+        builder: (_) => OrderDetailScreen(orderId: orderId),
+      ),
+    )
+        .then((_) {
+      if (mounted) _load();
+    });
   }
 
   @override
@@ -107,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: AppColors.background,
           child: RefreshIndicator(
             color: AppColors.pictonBlue,
-            onRefresh: _load,
+            onRefresh: () => _load(),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
@@ -194,76 +206,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 else
-                  _surfaceCard(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if ((next.status ?? '').isNotEmpty)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.pictonBlue
-                                        .withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    next.status!.toUpperCase(),
-                                    style: AppFonts.montserrat(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.pictonBlue,
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(height: 8),
-                              Text(
-                                next.serviceName,
-                                style: AppFonts.montserrat(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.darkGray,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              _infoRow(
-                                Icons.calendar_today_outlined,
-                                _formatDate(next.date),
-                              ),
-                              _infoRow(
-                                Icons.schedule_outlined,
-                                [
-                                  _formatTime(next.startTime),
-                                  _formatTime(next.endTime),
-                                ].where((e) => e.isNotEmpty).join(' — '),
-                              ),
-                              _infoRow(
-                                Icons.location_on_outlined,
-                                next.address ?? '—',
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: const BoxDecoration(
-                            color: AppColors.yellow,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.cleaning_services_outlined,
-                            color: AppColors.darkGray,
-                          ),
-                        ),
-                      ],
-                    ),
+                  OrderMiniCard(
+                    order: next,
+                    elevated: true,
+                    color: Colors.white,
+                    onTap: () => _openOrder(next.id),
                   ),
                 if (specialist != null) ...[
                   const SizedBox(height: 16),
@@ -384,25 +331,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       child: child,
-    );
-  }
-
-  Widget _infoRow(IconData icon, String text) {
-    if (text.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: AppColors.darkGray.withValues(alpha: 0.55)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: AppFonts.body(fontSize: 13, color: AppColors.darkGray),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

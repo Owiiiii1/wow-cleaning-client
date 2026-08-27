@@ -1,4 +1,5 @@
 import 'package:wow_cleaning/services/api_client.dart';
+import 'package:wow_cleaning/services/schedule_api.dart';
 
 class HomeNewsItem {
   HomeNewsItem({
@@ -16,41 +17,6 @@ class HomeNewsItem {
       id: (json['id'] as num).toInt(),
       shortDescription: json['short_description']?.toString() ?? '',
       imageUrl: json['image_url']?.toString(),
-    );
-  }
-}
-
-class NextCleaning {
-  NextCleaning({
-    required this.id,
-    required this.serviceName,
-    this.status,
-    this.paymentStatus,
-    this.date,
-    this.startTime,
-    this.endTime,
-    this.address,
-  });
-
-  final int id;
-  final String serviceName;
-  final String? status;
-  final String? paymentStatus;
-  final String? date;
-  final String? startTime;
-  final String? endTime;
-  final String? address;
-
-  factory NextCleaning.fromJson(Map<String, dynamic> json) {
-    return NextCleaning(
-      id: (json['id'] as num).toInt(),
-      serviceName: json['service_name']?.toString() ?? '',
-      status: json['status']?.toString(),
-      paymentStatus: json['payment_status']?.toString(),
-      date: json['date']?.toString(),
-      startTime: json['start_time']?.toString(),
-      endTime: json['end_time']?.toString(),
-      address: json['address']?.toString(),
     );
   }
 }
@@ -81,7 +47,7 @@ class HomeData {
   });
 
   final String userName;
-  final NextCleaning? nextCleaning;
+  final ScheduleOrder? nextCleaning;
   final SpecialistOnTheWay? specialistOnTheWay;
   final List<HomeNewsItem> news;
 }
@@ -136,8 +102,8 @@ class HomeApi {
 
     return HomeData(
       userName: user['name']?.toString() ?? '',
-      nextCleaning: nextRaw is Map<String, dynamic>
-          ? NextCleaning.fromJson(nextRaw)
+      nextCleaning: nextRaw is Map
+          ? ScheduleOrder.fromJson(Map<String, dynamic>.from(nextRaw))
           : null,
       specialistOnTheWay: specialistRaw is Map<String, dynamic>
           ? SpecialistOnTheWay.fromJson(specialistRaw)

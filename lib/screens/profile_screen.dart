@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/l10n/locale_controller.dart';
+import 'package:wow_cleaning/screens/cleaning_history_screen.dart';
 import 'package:wow_cleaning/screens/login_screen.dart';
 import 'package:wow_cleaning/screens/properties_list_screen.dart';
 import 'package:wow_cleaning/screens/settings_screen.dart';
@@ -168,7 +169,13 @@ class ProfileScreen extends StatelessWidget {
               _ProfileTile(
                 icon: Icons.history_rounded,
                 label: s.cleaningHistory,
-                onTap: null,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const CleaningHistoryScreen(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 24),
               _SectionTitle(title: s.supportSecuritySection),
