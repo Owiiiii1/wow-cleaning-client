@@ -8,7 +8,7 @@ workflows:
       app_store_connect: Codemagic WOW Cleaning
 
     environment:
-      flutter: stable
+      flutter: 3.38.7
       xcode: latest
       cocoapods: default
 
