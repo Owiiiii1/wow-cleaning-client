@@ -49,5 +49,7 @@
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow photo access to send images in chat.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to take photos for chat and cleaning reports.</string>
 </dict>
 </plist>
