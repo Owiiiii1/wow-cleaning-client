@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/l10n/locale_controller.dart';
 import 'package:wow_cleaning/screens/news_detail_screen.dart';
 import 'package:wow_cleaning/screens/order_detail_screen.dart';
 import 'package:wow_cleaning/services/home_api.dart';
+import 'package:wow_cleaning/services/schedule_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
-import 'package:wow_cleaning/widgets/order_mini_card.dart';
+import 'package:wow_cleaning/widgets/current_cleaning_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -30,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   HomeData? _data;
   bool _loading = true;
   String? _error;
+  Timer? _trackingPoll;
 
   String get _fallbackName {
     final profile =
@@ -48,6 +52,27 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _trackingPoll?.cancel();
+    super.dispose();
+  }
+
+  void _syncTrackingPoll() {
+    final next = _data?.nextCleaning;
+    final shouldPoll = next?.status == 'on_the_way';
+    if (shouldPoll && _trackingPoll == null) {
+      _trackingPoll = Timer.periodic(const Duration(seconds: 15), (_) {
+        if (widget.isActive) {
+          _load(silent: true);
+        }
+      });
+    } else if (!shouldPoll) {
+      _trackingPoll?.cancel();
+      _trackingPoll = null;
+    }
   }
 
   @override
@@ -74,16 +99,14 @@ class _HomeScreenState extends State<HomeScreen> {
         _loading = false;
         _error = null;
       });
+      _syncTrackingPoll();
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _loading = false;
         if (!silent || _data == null) {
           _error = S.current.homeLoadFailed;
-          _data ??= HomeData(
-            userName: _fallbackName,
-            news: const [],
-          );
+          _data ??= HomeData(userName: _fallbackName, news: const []);
         }
       });
     }
@@ -92,13 +115,21 @@ class _HomeScreenState extends State<HomeScreen> {
   void _openOrder(int orderId) {
     Navigator.of(context)
         .push(
-      MaterialPageRoute(
-        builder: (_) => OrderDetailScreen(orderId: orderId),
-      ),
-    )
+          MaterialPageRoute(
+            builder: (_) => OrderDetailScreen(orderId: orderId),
+          ),
+        )
         .then((_) {
-      if (mounted) _load();
-    });
+          if (mounted) _load();
+        });
+  }
+
+  bool _isCurrentService(ScheduleOrder? order) {
+    if (order == null || !order.operatorConfirmed) return false;
+    return switch (order.status) {
+      'accepted' || 'on_the_way' || 'started' => true,
+      _ => false,
+    };
   }
 
   @override
@@ -158,8 +189,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.pictonBlue,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                          AppColors.pictonBlue.withValues(alpha: 0.45),
+                      disabledBackgroundColor: AppColors.pictonBlue.withValues(
+                        alpha: 0.45,
+                      ),
                       disabledForegroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -177,7 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 22),
                 Text(
-                  s.upcomingService,
+                  _isCurrentService(next)
+                      ? s.currentService
+                      : s.upcomingService,
                   style: AppFonts.montserrat(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -206,55 +240,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 else
-                  OrderMiniCard(
+                  CurrentCleaningCard(
                     order: next,
-                    elevated: true,
-                    color: Colors.white,
-                    onTap: () => _openOrder(next.id),
+                    specialist: specialist,
+                    operatorPhone: data?.operatorPhone,
+                    onOpenOrder: () => _openOrder(next.id),
                   ),
-                if (specialist != null) ...[
-                  const SizedBox(height: 16),
-                  _surfaceCard(
-                    color: AppColors.pictonBlue.withValues(alpha: 0.08),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: const BoxDecoration(
-                            color: AppColors.pictonBlue,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                s.specialistRushing(specialist.cleanerName),
-                                style: AppFonts.montserrat(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.darkGray,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                s.specialistOnTheWayHint,
-                                style: AppFonts.body(
-                                  fontSize: 12,
-                                  color: AppColors.darkGray
-                                      .withValues(alpha: 0.6),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
                 const SizedBox(height: 22),
                 Text(
                   s.news,
@@ -371,15 +362,19 @@ class _NewsCard extends StatelessWidget {
                       errorBuilder: (context, error, stack) => Container(
                         color: AppColors.pictonBlue.withValues(alpha: 0.1),
                         alignment: Alignment.center,
-                        child: const Icon(Icons.image_outlined,
-                            color: AppColors.darkGray),
+                        child: const Icon(
+                          Icons.image_outlined,
+                          color: AppColors.darkGray,
+                        ),
                       ),
                     )
                   : Container(
                       color: AppColors.pictonBlue.withValues(alpha: 0.1),
                       alignment: Alignment.center,
-                      child: const Icon(Icons.newspaper_outlined,
-                          color: AppColors.pictonBlue),
+                      child: const Icon(
+                        Icons.newspaper_outlined,
+                        color: AppColors.pictonBlue,
+                      ),
                     ),
             ),
             Padding(

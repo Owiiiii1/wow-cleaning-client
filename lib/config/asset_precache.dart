@@ -12,14 +12,10 @@ class AssetPrecache {
     if (_started) return;
     _started = true;
 
-    final images = <String>[
-      ...BottomNavAssets.all,
-      HeaderAssets.mascot,
-    ];
+    final images = <String>[...BottomNavAssets.all, HeaderAssets.mascot];
 
     await Future.wait([
-      for (final path in images)
-        precacheImage(AssetImage(path), context),
+      for (final path in images) precacheImage(AssetImage(path), context),
     ]);
   }
 }

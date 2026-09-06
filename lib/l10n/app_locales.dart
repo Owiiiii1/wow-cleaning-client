@@ -9,12 +9,7 @@ class AppLocales {
   static const russian = Locale('ru');
 
   /// English first = default language.
-  static const supported = <Locale>[
-    english,
-    ukrainian,
-    spanishUs,
-    russian,
-  ];
+  static const supported = <Locale>[english, ukrainian, spanishUs, russian];
 
   static const Locale defaultLocale = english;
 

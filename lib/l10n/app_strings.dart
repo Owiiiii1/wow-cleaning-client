@@ -13,9 +13,8 @@ class S {
 
   static S of(BuildContext context) => current;
 
-  String _t(String key) => (_tables[_code] ?? _tables['en']!)[key] ??
-      _tables['en']![key] ??
-      key;
+  String _t(String key) =>
+      (_tables[_code] ?? _tables['en']!)[key] ?? _tables['en']![key] ?? key;
 
   // Common / menu
   String get menu => _t('menu');
@@ -77,10 +76,28 @@ class S {
   String get homeTagline => _t('homeTagline');
   String get bookNewCleaning => _t('bookNewCleaning');
   String get upcomingService => _t('upcomingService');
+  String get currentService => _t('currentService');
   String get serviceNotOrdered => _t('serviceNotOrdered');
   String specialistRushing(String name) =>
       _t('specialistRushing').replaceAll('{name}', name);
   String get specialistOnTheWayHint => _t('specialistOnTheWayHint');
+  String get trackingButton => _t('trackingButton');
+  String get callOperator => _t('callOperator');
+  String get operatorButton => _t('operatorButton');
+  String get callOperatorConfirmTitle => _t('callOperatorConfirmTitle');
+  String get callOperatorConfirmBody => _t('callOperatorConfirmBody');
+  String get callOperatorConfirmAction => _t('callOperatorConfirmAction');
+  String get updateAppTitle => _t('updateAppTitle');
+  String get updateAppBody => _t('updateAppBody');
+  String get updateAppButton => _t('updateAppButton');
+  String get trackingTitle => _t('trackingTitle');
+  String get trackingLive => _t('trackingLive');
+  String get trackingIdle => _t('trackingIdle');
+  String get trackingNoPoint => _t('trackingNoPoint');
+  String get trackingLoadFailed => _t('trackingLoadFailed');
+  String get stageAccepted => _t('stageAccepted');
+  String get stageOnTheWay => _t('stageOnTheWay');
+  String get stageCleaning => _t('stageCleaning');
   String get news => _t('news');
   String get newsEmpty => _t('newsEmpty');
   String get newsLoadFailed => _t('newsLoadFailed');
@@ -129,6 +146,11 @@ class S {
   String get paymentUnpaid => _t('paymentUnpaid');
   String get paymentPending => _t('paymentPending');
   String get paymentFailed => _t('paymentFailed');
+  String get orderFrozen => _t('orderFrozen');
+  String get frozenPaymentFailed => _t('frozenPaymentFailed');
+  String get frozenNoCard => _t('frozenNoCard');
+  String get frozenAuthTimeout => _t('frozenAuthTimeout');
+  String get retryPayment => _t('retryPayment');
   String get inboxTitle => _t('inboxTitle');
   String get inboxEmpty => _t('inboxEmpty');
   String get inboxLoadFailed => _t('inboxLoadFailed');
@@ -143,13 +165,80 @@ class S {
   String get orderFinishedTitle => _t('orderFinishedTitle');
   String get orderFinishedBody => _t('orderFinishedBody');
   String get ratingSubmitFailed => _t('ratingSubmitFailed');
+  String get surveyTitle => _t('surveyTitle');
+  String get surveyBody => _t('surveyBody');
+  String get surveyCleaningQuality => _t('surveyCleaningQuality');
+  String get surveyPunctuality => _t('surveyPunctuality');
+  String get surveyCommunication => _t('surveyCommunication');
+  String get surveyConvenience => _t('surveyConvenience');
+  String get surveyComment => _t('surveyComment');
+  String get surveyCommentHint => _t('surveyCommentHint');
+  String get surveySubmit => _t('surveySubmit');
+  String get surveySkip => _t('surveySkip');
+  String get surveySubmitFailed => _t('surveySubmitFailed');
   String get cleaningHistoryEmpty => _t('cleaningHistoryEmpty');
   String get cleaningHistoryLoadFailed => _t('cleaningHistoryLoadFailed');
   String get profileSettingsSection => _t('profileSettingsSection');
+  String get paymentCardSection => _t('paymentCardSection');
+  String get paymentCardNone => _t('paymentCardNone');
+  String paymentCardExpiry(String date) =>
+      _t('paymentCardExpiry').replaceAll('{date}', date);
+  String get paymentCardUnlink => _t('paymentCardUnlink');
+  String get paymentCardAdd => _t('paymentCardAdd');
+  String get paymentCardUnlinkTitle => _t('paymentCardUnlinkTitle');
+  String get paymentCardUnlinkConfirm => _t('paymentCardUnlinkConfirm');
+  String get paymentCardUnlinked => _t('paymentCardUnlinked');
+  String get paymentCardUnlinkFailed => _t('paymentCardUnlinkFailed');
+  String get paymentCardUnlinkRequested => _t('paymentCardUnlinkRequested');
+  String get ok => _t('ok');
   String get supportSecuritySection => _t('supportSecuritySection');
   String get savedProperties => _t('savedProperties');
   String get cleaningHistory => _t('cleaningHistory');
   String get faq => _t('faq');
+  String get requests => _t('requests');
+  String get newRequest => _t('newRequest');
+  String get requestDetails => _t('requestDetails');
+  String get requestActive => _t('requestActive');
+  String get requestCompleted => _t('requestCompleted');
+  String get requestAll => _t('requestAll');
+  String get requestsEmpty => _t('requestsEmpty');
+  String get requestsLoadFailed => _t('requestsLoadFailed');
+  String get feedbackPrompt => _t('feedbackPrompt');
+  String get disputePrompt => _t('disputePrompt');
+  String get requestMessageHint => _t('requestMessageHint');
+  String get addPhotos => _t('addPhotos');
+  String get photos => _t('photos');
+  String requestPhotos(int count) =>
+      _t('requestPhotos').replaceAll('{count}', '$count');
+  String get sendRequest => _t('sendRequest');
+  String get requestSubmitFailed => _t('requestSubmitFailed');
+  String get reportProblem => _t('reportProblem');
+  String get problemReported => _t('problemReported');
+  String reportProblemUntil(String date) =>
+      _t('reportProblemUntil').replaceAll('{date}', date);
+  String get operatorUpdates => _t('operatorUpdates');
+  String get noOperatorUpdates => _t('noOperatorUpdates');
+  String get contactSupport => _t('contactSupport');
+  String get relatedCleaning => _t('relatedCleaning');
+  String get remediationCleaning => _t('remediationCleaning');
+  String get resolution => _t('resolution');
+  String requestTypeLabel(String type) => type == 'cleaning_dispute'
+      ? _t('cleaningDispute')
+      : _t('generalFeedback');
+  String requestStatusLabel(String status) {
+    const known = {
+      'new': 'requestStatusNew',
+      'open': 'requestStatusOpen',
+      'in_progress': 'requestStatusInProgress',
+      'waiting_client': 'requestStatusWaitingClient',
+      'resolved': 'requestStatusResolved',
+      'completed': 'requestStatusCompleted',
+      'closed': 'requestStatusClosed',
+    };
+    final key = known[status];
+    return key == null ? status.replaceAll('_', ' ') : _t(key);
+  }
+
   String get addProperty => _t('addProperty');
   String get editProperty => _t('editProperty');
   String get fixProperty => _t('fixProperty');
@@ -176,10 +265,41 @@ class S {
   String get propertyAdditionalPhotos => _t('propertyAdditionalPhotos');
   String get propertyEntryInstructions => _t('propertyEntryInstructions');
   String get propertyEntryHint => _t('propertyEntryHint');
+  String get propertyAddressLine1 => _t('propertyAddressLine1');
+  String get propertyAddressLine1Hint => _t('propertyAddressLine1Hint');
+  String get propertyAddressLine2 => _t('propertyAddressLine2');
+  String get propertyAddressLine2Hint => _t('propertyAddressLine2Hint');
+  String get propertyCity => _t('propertyCity');
+  String get propertyState => _t('propertyState');
+  String get propertyZip => _t('propertyZip');
+  String get propertySelectState => _t('propertySelectState');
+  String get propertyAddressRequired => _t('propertyAddressRequired');
+  String get propertyZipInvalid => _t('propertyZipInvalid');
+  String get propertyStepAddress => _t('propertyStepAddress');
+  String get propertyStepDescription => _t('propertyStepDescription');
+  String get propertyStepInstructions => _t('propertyStepInstructions');
+  String get propertyStepPhotos => _t('propertyStepPhotos');
+  String get propertyInstructionsPhotosHint =>
+      _t('propertyInstructionsPhotosHint');
+  String get propertyBedroomsShort => _t('propertyBedroomsShort');
+  String get propertyBathroomsShort => _t('propertyBathroomsShort');
+  String get propertyDelete => _t('propertyDelete');
+  String get propertyDeleteTitle => _t('propertyDeleteTitle');
+  String get propertyDeleteConfirm => _t('propertyDeleteConfirm');
+  String get propertyDeleteFailed => _t('propertyDeleteFailed');
+  String get propertyMyTitle => _t('propertyMyTitle');
   String get next => _t('next');
   String get payNow => _t('payNow');
-  String bookingStepOf(int current, int total) =>
-      _t('bookingStepOf').replaceAll('{current}', '$current').replaceAll('{total}', '$total');
+  String get securePaymentMethod => _t('securePaymentMethod');
+  String get cardSetupHint => _t('cardSetupHint');
+  String get cardSetupBefore => _t('cardSetupBefore');
+  String get cardAlreadyLinked => _t('cardAlreadyLinked');
+  String get cardSetupCancelled => _t('cardSetupCancelled');
+  String get cardSetupPending => _t('cardSetupPending');
+  String get cardSetupContinue => _t('cardSetupContinue');
+  String bookingStepOf(int current, int total) => _t(
+    'bookingStepOf',
+  ).replaceAll('{current}', '$current').replaceAll('{total}', '$total');
   String get bookingStepProperty => _t('bookingStepProperty');
   String get bookingStepService => _t('bookingStepService');
   String get bookingStepAddons => _t('bookingStepAddons');
@@ -189,6 +309,10 @@ class S {
   String get bookingWindowsLabel => _t('bookingWindowsLabel');
   String get bookingWindowsHint => _t('bookingWindowsHint');
   String get bookingWindowsRequired => _t('bookingWindowsRequired');
+  String get bookingWindowsInside => _t('bookingWindowsInside');
+  String get bookingWindowsOutside => _t('bookingWindowsOutside');
+  String get bookingWindowsSidesRequired => _t('bookingWindowsSidesRequired');
+  String get bookingWindowsFormula => _t('bookingWindowsFormula');
   String get bookingEstimateTitle => _t('bookingEstimateTitle');
   String get bookingEstimateNote => _t('bookingEstimateNote');
   String get bookingEstimatePrice => _t('bookingEstimatePrice');
@@ -299,9 +423,28 @@ class S {
       'homeTagline': 'Your home is due for its next sparkle.',
       'bookNewCleaning': '+ Book New Cleaning',
       'upcomingService': 'UPCOMING SERVICE',
+      'currentService': 'CURRENT SERVICE',
       'serviceNotOrdered': 'Service has not been ordered yet.',
       'specialistRushing': '{name} is already rushing to you',
       'specialistOnTheWayHint': 'Your cleaner is on the way',
+      'trackingButton': 'Tracking',
+      'callOperator': 'Call operator',
+      'operatorButton': 'Operator',
+      'callOperatorConfirmTitle': 'Call the operator?',
+      'callOperatorConfirmBody': 'Open the phone app and call {phone}?',
+      'callOperatorConfirmAction': 'Call',
+      'updateAppTitle': 'Update the app',
+      'updateAppBody':
+          'This version is no longer supported. Please install the latest version from the store.',
+      'updateAppButton': 'Update',
+      'trackingTitle': 'LIVE TRACKING',
+      'trackingLive': 'Live',
+      'trackingIdle': 'Waiting',
+      'trackingNoPoint': 'The cleaner location is not available yet.',
+      'trackingLoadFailed': 'Could not load the location.',
+      'stageAccepted': 'Accepted',
+      'stageOnTheWay': 'On the way',
+      'stageCleaning': 'Cleaning',
       'news': 'NEWS',
       'newsEmpty': 'No news yet.',
       'newsLoadFailed': 'Failed to load news',
@@ -351,6 +494,13 @@ class S {
       'paymentUnpaid': 'Unpaid',
       'paymentPending': 'Payment pending',
       'paymentFailed': 'Payment failed',
+      'orderFrozen': 'ORDER FROZEN',
+      'frozenPaymentFailed':
+          'The payment was declined. Replace the card or retry payment.',
+      'frozenNoCard': 'A payment card is required to restore this visit.',
+      'frozenAuthTimeout':
+          'The payment confirmation deadline expired. Retry payment.',
+      'retryPayment': 'Restore payment',
       'inboxTitle': 'Messages',
       'inboxEmpty': 'No messages yet',
       'inboxLoadFailed': 'Failed to load messages',
@@ -365,13 +515,71 @@ class S {
       'orderFinishedTitle': 'ORDER COMPLETED SUCCESSFULLY',
       'orderFinishedBody': 'Please rate the cleaning',
       'ratingSubmitFailed': 'Could not save the rating',
+      'surveyTitle': 'HELP US IMPROVE',
+      'surveyBody': 'A few quick answers will help us make the service better.',
+      'surveyCleaningQuality': 'Cleaning quality',
+      'surveyPunctuality': 'Team punctuality',
+      'surveyCommunication': 'Communication and courtesy',
+      'surveyConvenience': 'Service convenience',
+      'surveyComment': 'What could we improve? (optional)',
+      'surveyCommentHint': 'Share any suggestions',
+      'surveySubmit': 'Send feedback',
+      'surveySkip': 'Not now',
+      'surveySubmitFailed': 'Could not send the survey. Please try again.',
       'profileSettingsSection': 'SETTINGS',
+      'paymentCardSection': 'PAYMENT CARD',
+      'paymentCardNone': 'No card linked',
+      'paymentCardExpiry': 'Exp {date}',
+      'paymentCardUnlink': 'Unlink card',
+      'paymentCardAdd': 'Add card',
+      'paymentCardUnlinkTitle': 'UNLINK CARD',
+      'paymentCardUnlinkConfirm':
+          'The card will be removed from Stripe and will no longer be saved on your account.',
+      'paymentCardUnlinked': 'Card unlinked',
+      'paymentCardUnlinkFailed': 'Could not unlink the card. Please try again.',
+      'paymentCardUnlinkRequested':
+          'Request to unlink the card has been sent to the operator',
+      'ok': 'OK',
       'supportSecuritySection': 'SUPPORT & SECURITY',
       'savedProperties': 'Saved properties',
       'cleaningHistory': 'Cleaning history',
       'cleaningHistoryEmpty': 'No completed cleanings yet',
       'cleaningHistoryLoadFailed': 'Failed to load cleaning history',
       'faq': 'FAQ',
+      'requests': 'Requests',
+      'newRequest': 'New request',
+      'requestDetails': 'Request details',
+      'requestActive': 'Active',
+      'requestCompleted': 'Completed',
+      'requestAll': 'All',
+      'requestsEmpty': 'No requests here yet',
+      'requestsLoadFailed': 'Failed to load requests',
+      'feedbackPrompt': 'Tell us how we can help or improve our service.',
+      'disputePrompt': 'Describe the problem with this cleaning.',
+      'requestMessageHint': 'Describe the situation…',
+      'addPhotos': 'Add photos',
+      'photos': 'Photos',
+      'requestPhotos': 'Photos ({count}/5)',
+      'sendRequest': 'SEND REQUEST',
+      'requestSubmitFailed': 'Could not send the request. Please try again.',
+      'reportProblem': 'Report a problem',
+      'problemReported': 'Problem reported',
+      'reportProblemUntil': 'Available until {date}',
+      'operatorUpdates': 'Operator updates',
+      'noOperatorUpdates': 'No updates yet.',
+      'contactSupport': 'Open support chat',
+      'relatedCleaning': 'Related cleaning',
+      'remediationCleaning': 'Remediation cleaning',
+      'resolution': 'Resolution',
+      'generalFeedback': 'General feedback',
+      'cleaningDispute': 'Cleaning problem',
+      'requestStatusNew': 'New',
+      'requestStatusOpen': 'Open',
+      'requestStatusInProgress': 'In progress',
+      'requestStatusWaitingClient': 'Waiting for you',
+      'requestStatusResolved': 'Resolved',
+      'requestStatusCompleted': 'Completed',
+      'requestStatusClosed': 'Closed',
       'addProperty': 'Add property',
       'editProperty': 'Edit property',
       'fixProperty': 'Fix',
@@ -381,7 +589,8 @@ class S {
       'propertyLoadFailed': 'Failed to load property',
       'propertySaveFailed': 'Failed to save property',
       'propertyTitleRequired': 'Title is required',
-      'propertyHousingRequired': 'Square footage, bedrooms and bathrooms are required',
+      'propertyHousingRequired':
+          'Square footage, bedrooms and bathrooms are required',
       'propertyIncomplete': 'Missing square footage, bedrooms or bathrooms.',
       'propertySquareFootage': 'Square footage',
       'propertySquareFootageHint': 'Total sqft',
@@ -398,20 +607,60 @@ class S {
       'propertyAdditionalPhotos': 'Additional photos',
       'propertyEntryInstructions': 'Entry instructions',
       'propertyEntryHint': 'Codes, keys, how to enter',
+      'propertyAddressLine1': 'Street address',
+      'propertyAddressLine1Hint': '123 Main St',
+      'propertyAddressLine2': 'Apt, suite, unit',
+      'propertyAddressLine2Hint': 'Apt 4B (optional)',
+      'propertyCity': 'City',
+      'propertyState': 'State',
+      'propertyZip': 'ZIP code',
+      'propertySelectState': 'Select state',
+      'propertyAddressRequired': 'Enter street, city, state and ZIP',
+      'propertyZipInvalid': 'Enter a 5-digit ZIP code',
+      'propertyStepAddress': 'ADDRESS',
+      'propertyStepDescription': 'HOME DETAILS',
+      'propertyStepInstructions': 'INSTRUCTIONS',
+      'propertyStepPhotos': 'NAME & PHOTOS',
+      'propertyInstructionsPhotosHint':
+          'If you need photos of the home or access, you can add them on the next step.',
+      'propertyBedroomsShort': 'bd',
+      'propertyBathroomsShort': 'ba',
+      'propertyDelete': 'Delete property',
+      'propertyDeleteTitle': 'DELETE PROPERTY',
+      'propertyDeleteConfirm':
+          'This property will be removed from your saved list.',
+      'propertyDeleteFailed': 'Could not delete the property.',
+      'propertyMyTitle': 'MY PROPERTIES',
       'next': 'Next',
       'payNow': 'Pay',
+      'securePaymentMethod': 'Secure payment method',
+      'cardSetupHint':
+          'You will not be charged now. Your card is saved securely by Stripe.',
+      'cardSetupBefore': 'Add a card to confirm your booking.',
+      'cardAlreadyLinked': 'A payment card is already linked to your account.',
+      'cardSetupCancelled':
+          'Card setup was cancelled. Please add a card to confirm your booking.',
+      'cardSetupPending': 'Waiting for card confirmation...',
+      'cardSetupContinue': 'Continue',
       'bookingStepOf': 'STEP {current} OF {total}',
       'bookingStepProperty': 'Choose property',
       'bookingStepService': 'Choose service',
       'bookingStepAddons': 'Add-ons',
       'bookingAddonsTitle': 'Any extras?',
-      'bookingAddonsSubtitle': 'You can select several add-ons or skip this step.',
+      'bookingAddonsSubtitle':
+          'You can select several add-ons or skip this step.',
       'bookingAddonsNone': 'None selected',
       'bookingWindowsLabel': 'How many windows?',
       'bookingWindowsHint': 'Number of windows',
       'bookingWindowsRequired': 'Enter the number of windows',
+      'bookingWindowsInside': 'Inside',
+      'bookingWindowsOutside': 'Outside',
+      'bookingWindowsSidesRequired': 'Choose inside, outside, or both',
+      'bookingWindowsFormula':
+          '\$5 inside, \$10 outside, \$15 both — per window',
       'bookingEstimateTitle': 'Preliminary estimate',
-      'bookingEstimateNote': 'This is a preliminary estimate. The final price and time may change after a manager reviews the order.',
+      'bookingEstimateNote':
+          'This is a preliminary estimate. The final price may change after a manager reviews the order.',
       'bookingEstimatePrice': 'Estimated price',
       'bookingEstimateTime': 'Estimated time',
       'bookingEstimateFailed': 'Could not calculate the estimate',
@@ -419,7 +668,7 @@ class S {
       'bookingHoursValue': '{hours} h',
       'bookingStepSchedule': 'Schedule',
       'bookingStepWishes': 'Special wishes',
-      'bookingStepPayment': 'Payment',
+      'bookingStepPayment': 'Confirm',
       'bookingPropertyTitle': 'Where should we clean?',
       'bookingPropertySubtitle': 'Select a saved property or add a new one.',
       'bookingServiceTitle': 'What needs a glow-up?',
@@ -450,8 +699,8 @@ class S {
       'bookingWishesTitle': 'Any special wishes?',
       'bookingWishesSubtitle': 'Tell us instructions for the cleaning.',
       'bookingWishesHint': 'e.g. focus on kitchen, leave keys under the mat…',
-      'bookingPaymentTitle': 'Review & pay',
-      'bookingPaymentSubtitle': 'Check your booking details before payment.',
+      'bookingPaymentTitle': 'Review & confirm',
+      'bookingPaymentSubtitle': 'Add a card to confirm your booking.',
       'bookingSummaryProperty': 'Property',
       'bookingSummaryService': 'Service',
       'bookingSummarySchedule': 'Schedule type',
@@ -514,16 +763,36 @@ class S {
       'chatEditing': 'Редагування повідомлення',
       'chatEdit': 'Редагувати',
       'chatDelete': 'Видалити',
-      'chatNotLinked': 'Привʼяжіть клієнтський акаунт, щоб користуватися чатом.',
+      'chatNotLinked':
+          'Привʼяжіть клієнтський акаунт, щоб користуватися чатом.',
       'welcomeBack': 'З ПОВЕРНЕННЯМ',
       'hiName': 'Привіт, {name}!',
       'hiGuest': 'Привіт!',
       'homeTagline': 'Час для наступного блиску вашого дому.',
       'bookNewCleaning': '+ Замовити клінінг',
       'upcomingService': 'НАЙБЛИЖЧИЙ СЕРВІС',
+      'currentService': 'ПОТОЧНИЙ СЕРВІС',
       'serviceNotOrdered': 'Сервіс ще не замовлено.',
       'specialistRushing': '{name} вже поспішає до вас',
       'specialistOnTheWayHint': 'Ваш клінер у дорозі',
+      'trackingButton': 'Трекінг',
+      'callOperator': 'Подзвонити оператору',
+      'operatorButton': 'Оператор',
+      'callOperatorConfirmTitle': 'Подзвонити оператору?',
+      'callOperatorConfirmBody': 'Відкрити телефон і зателефонувати {phone}?',
+      'callOperatorConfirmAction': 'Подзвонити',
+      'updateAppTitle': 'Оновіть додаток',
+      'updateAppBody':
+          'Ця версія більше не підтримується. Встановіть останню версію з магазину.',
+      'updateAppButton': 'Оновити',
+      'trackingTitle': 'ТРЕКІНГ',
+      'trackingLive': 'Наживо',
+      'trackingIdle': 'Очікування',
+      'trackingNoPoint': 'Геопозиція клінера ще недоступна.',
+      'trackingLoadFailed': 'Не вдалося завантажити геопозицію.',
+      'stageAccepted': 'Прийнято',
+      'stageOnTheWay': 'В дорозі',
+      'stageCleaning': 'Уборка',
       'news': 'НОВИНИ',
       'newsEmpty': 'Новин ще немає.',
       'newsLoadFailed': 'Не вдалося завантажити новину',
@@ -573,6 +842,13 @@ class S {
       'paymentUnpaid': 'Не оплачено',
       'paymentPending': 'Очікує оплати',
       'paymentFailed': 'Помилка оплати',
+      'orderFrozen': 'ЗАМОВЛЕННЯ ЗАМОРОЖЕНО',
+      'frozenPaymentFailed':
+          'Платіж відхилено. Замініть картку або повторіть оплату.',
+      'frozenNoCard': 'Щоб відновити візит, додайте платіжну картку.',
+      'frozenAuthTimeout':
+          'Строк підтвердження оплати минув. Повторіть оплату.',
+      'retryPayment': 'Відновити оплату',
       'inboxTitle': 'Повідомлення',
       'inboxEmpty': 'Повідомлень ще немає',
       'inboxLoadFailed': 'Не вдалося завантажити повідомлення',
@@ -587,13 +863,75 @@ class S {
       'orderFinishedTitle': 'ЗАМОВЛЕННЯ УСПІШНО ВИКОНАНО',
       'orderFinishedBody': 'Будь ласка, оцініть прибирання',
       'ratingSubmitFailed': 'Не вдалося зберегти оцінку',
+      'surveyTitle': 'ДОПОМОЖІТЬ НАМ СТАТИ КРАЩИМИ',
+      'surveyBody':
+          'Кілька коротких відповідей допоможуть нам покращити сервіс.',
+      'surveyCleaningQuality': 'Якість прибирання',
+      'surveyPunctuality': 'Пунктуальність команди',
+      'surveyCommunication': 'Спілкування та ввічливість',
+      'surveyConvenience': 'Зручність сервісу',
+      'surveyComment': 'Що ми можемо покращити? (необов’язково)',
+      'surveyCommentHint': 'Поділіться своїми побажаннями',
+      'surveySubmit': 'Надіслати відгук',
+      'surveySkip': 'Не зараз',
+      'surveySubmitFailed': 'Не вдалося надіслати анкету. Спробуйте ще раз.',
       'profileSettingsSection': 'НАЛАШТУВАННЯ',
+      'paymentCardSection': 'ПЛАТІЖНА КАРТКА',
+      'paymentCardNone': 'Картка не прив’язана',
+      'paymentCardExpiry': 'До {date}',
+      'paymentCardUnlink': 'Відв’язати картку',
+      'paymentCardAdd': 'Додати картку',
+      'paymentCardUnlinkTitle': 'ВІДВ’ЯЗАТИ КАРТКУ',
+      'paymentCardUnlinkConfirm':
+          'Картку буде видалено зі Stripe і вона більше не зберігатиметься в акаунті.',
+      'paymentCardUnlinked': 'Картку відв’язано',
+      'paymentCardUnlinkFailed':
+          'Не вдалося відв’язати картку. Спробуйте ще раз.',
+      'paymentCardUnlinkRequested':
+          'Запит на відв’язування картки надіслано оператору',
+      'ok': 'OK',
       'supportSecuritySection': 'ПІДТРИМКА ТА БЕЗПЕКА',
       'savedProperties': 'Збережені обʼєкти',
       'cleaningHistory': 'Історія прибирань',
       'cleaningHistoryEmpty': 'Завершених прибирань ще немає',
       'cleaningHistoryLoadFailed': 'Не вдалося завантажити історію',
       'faq': 'FAQ',
+      'requests': 'Звернення',
+      'newRequest': 'Нове звернення',
+      'requestDetails': 'Деталі звернення',
+      'requestActive': 'Активні',
+      'requestCompleted': 'Завершені',
+      'requestAll': 'Усі',
+      'requestsEmpty': 'Звернень поки немає',
+      'requestsLoadFailed': 'Не вдалося завантажити звернення',
+      'feedbackPrompt':
+          'Розкажіть, як ми можемо допомогти або покращити сервіс.',
+      'disputePrompt': 'Опишіть проблему з цим прибиранням.',
+      'requestMessageHint': 'Опишіть ситуацію…',
+      'addPhotos': 'Додати фото',
+      'photos': 'Фото',
+      'requestPhotos': 'Фото ({count}/5)',
+      'sendRequest': 'НАДІСЛАТИ',
+      'requestSubmitFailed':
+          'Не вдалося надіслати звернення. Спробуйте ще раз.',
+      'reportProblem': 'Повідомити про проблему',
+      'problemReported': 'Про проблему повідомлено',
+      'reportProblemUntil': 'Доступно до {date}',
+      'operatorUpdates': 'Оновлення оператора',
+      'noOperatorUpdates': 'Оновлень поки немає.',
+      'contactSupport': 'Відкрити чат підтримки',
+      'relatedCleaning': 'Пов’язане прибирання',
+      'remediationCleaning': 'Повторне прибирання',
+      'resolution': 'Рішення',
+      'generalFeedback': 'Загальний відгук',
+      'cleaningDispute': 'Проблема з прибиранням',
+      'requestStatusNew': 'Нове',
+      'requestStatusOpen': 'Відкрите',
+      'requestStatusInProgress': 'В роботі',
+      'requestStatusWaitingClient': 'Очікує на вас',
+      'requestStatusResolved': 'Вирішено',
+      'requestStatusCompleted': 'Завершено',
+      'requestStatusClosed': 'Закрито',
       'addProperty': 'Додати обʼєкт',
       'editProperty': 'Редагувати обʼєкт',
       'fixProperty': 'Виправити',
@@ -620,20 +958,60 @@ class S {
       'propertyAdditionalPhotos': 'Додаткові фото',
       'propertyEntryInstructions': 'Інструкції для входу',
       'propertyEntryHint': 'Коди, ключі, як увійти',
+      'propertyAddressLine1': 'Вулиця',
+      'propertyAddressLine1Hint': '123 Main St',
+      'propertyAddressLine2': 'Квартира, suite, unit',
+      'propertyAddressLine2Hint': 'Apt 4B (необовʼязково)',
+      'propertyCity': 'Місто',
+      'propertyState': 'Штат',
+      'propertyZip': 'ZIP-код',
+      'propertySelectState': 'Оберіть штат',
+      'propertyAddressRequired': 'Вкажіть вулицю, місто, штат і ZIP',
+      'propertyZipInvalid': 'Введіть 5-значний ZIP',
+      'propertyStepAddress': 'АДРЕСА',
+      'propertyStepDescription': 'ПРО БУДИНОК',
+      'propertyStepInstructions': 'ІНСТРУКЦІЇ',
+      'propertyStepPhotos': 'НАЗВА І ФОТО',
+      'propertyInstructionsPhotosHint':
+          'Якщо потрібні фото будинку чи доступу, їх можна додати на наступному кроці.',
+      'propertyBedroomsShort': 'сп.',
+      'propertyBathroomsShort': 'ван.',
+      'propertyDelete': 'Видалити обʼєкт',
+      'propertyDeleteTitle': 'ВИДАЛИТИ ОБʼЄКТ',
+      'propertyDeleteConfirm': 'Обʼєкт буде видалено зі збережених.',
+      'propertyDeleteFailed': 'Не вдалося видалити обʼєкт.',
+      'propertyMyTitle': 'МОЇ ОБʼЄКТИ',
       'next': 'Далі',
       'payNow': 'Оплатити',
+      'securePaymentMethod': 'Надійний спосіб оплати',
+      'cardSetupHint':
+          'Зараз списання не буде. Картка зберігається безпечно в Stripe.',
+      'cardSetupBefore': 'Додайте картку, щоб підтвердити бронювання.',
+      'cardAlreadyLinked': 'Платіжна картка вже прив’язана до вашого акаунта.',
+      'cardSetupCancelled':
+          'Додавання картки скасовано. Додайте картку, щоб підтвердити бронювання.',
+      'cardSetupPending': 'Очікуємо підтвердження картки...',
+      'cardSetupContinue': 'Продовжити',
       'bookingStepOf': 'КРОК {current} З {total}',
       'bookingStepProperty': 'Обʼєкт уборки',
       'bookingStepService': 'Тип уборки',
       'bookingStepAddons': 'Доп. послуги',
       'bookingAddonsTitle': 'Потрібні допи?',
-      'bookingAddonsSubtitle': 'Можна обрати кілька послуг або пропустити крок.',
+      'bookingAddonsSubtitle':
+          'Можна обрати кілька послуг або пропустити крок.',
       'bookingAddonsNone': 'Не обрано',
       'bookingWindowsLabel': 'Скільки вікон?',
       'bookingWindowsHint': 'Кількість вікон',
       'bookingWindowsRequired': 'Вкажіть кількість вікон',
+      'bookingWindowsInside': 'Зсередини',
+      'bookingWindowsOutside': 'Ззовні',
+      'bookingWindowsSidesRequired':
+          'Оберіть зсередини, ззовні або обидва варіанти',
+      'bookingWindowsFormula':
+          '\$5 зсередини, \$10 ззовні, \$15 і так і так — за одне вікно',
       'bookingEstimateTitle': 'Попередній розрахунок',
-      'bookingEstimateNote': 'Це попередній розрахунок. Фінальні ціна і час можуть змінитися після перевірки менеджером.',
+      'bookingEstimateNote':
+          'Це попередній розрахунок. Фінальна ціна може змінитися після перевірки менеджером.',
       'bookingEstimatePrice': 'Орієнтовна ціна',
       'bookingEstimateTime': 'Орієнтовний час',
       'bookingEstimateFailed': 'Не вдалося розрахувати кошторис',
@@ -641,14 +1019,13 @@ class S {
       'bookingHoursValue': '{hours} год',
       'bookingStepSchedule': 'Розклад',
       'bookingStepWishes': 'Побажання',
-      'bookingStepPayment': 'Оплата',
+      'bookingStepPayment': 'Підтвердження',
       'bookingPropertyTitle': 'Де прибирати?',
       'bookingPropertySubtitle': 'Оберіть збережений обʼєкт або додайте новий.',
       'bookingServiceTitle': 'Яка уборка потрібна?',
       'bookingServiceSubtitle': 'Оберіть одну основну послугу.',
       'bookingScheduleTitle': 'Коли приїхати?',
-      'bookingScheduleSubtitle':
-          'Оберіть дату, потім перевірте вільні слоти.',
+      'bookingScheduleSubtitle': 'Оберіть дату, потім перевірте вільні слоти.',
       'bookingOneTime': 'Разова',
       'bookingRecurring': 'Періодична',
       'bookingWeekly': 'Щотижня',
@@ -667,13 +1044,14 @@ class S {
       'bookingPreferredStartHint':
           'Вільне вікно довше за тривалість уборки. Оберіть старт так, щоб візит вмістився в нього.',
       'bookingAvailabilityFailed': 'Не вдалося перевірити доступність',
-      'bookingHoldFailed': 'Не вдалося зарезервувати час. Спробуйте інший слот.',
+      'bookingHoldFailed':
+          'Не вдалося зарезервувати час. Спробуйте інший слот.',
       'bookingHeld': 'Час зарезервовано. Завершіть заявку, щоб залишити його.',
       'bookingWishesTitle': 'Особливі побажання?',
       'bookingWishesSubtitle': 'Вкажіть інструкції до прибирання.',
       'bookingWishesHint': 'напр. більше уваги кухні, ключі під килимком…',
-      'bookingPaymentTitle': 'Перевірка та оплата',
-      'bookingPaymentSubtitle': 'Перевірте дані перед оплатою.',
+      'bookingPaymentTitle': 'Перевірка та підтвердження',
+      'bookingPaymentSubtitle': 'Додайте картку, щоб підтвердити бронювання.',
       'bookingSummaryProperty': 'Обʼєкт',
       'bookingSummaryService': 'Послуга',
       'bookingSummarySchedule': 'Тип розкладу',
@@ -743,9 +1121,29 @@ class S {
       'homeTagline': 'Tu hogar espera su próximo brillo.',
       'bookNewCleaning': '+ Reservar limpieza',
       'upcomingService': 'PRÓXIMO SERVICIO',
+      'currentService': 'SERVICIO ACTUAL',
       'serviceNotOrdered': 'Aún no has pedido un servicio.',
       'specialistRushing': '{name} ya va hacia ti',
       'specialistOnTheWayHint': 'Tu limpiador está en camino',
+      'trackingButton': 'Seguimiento',
+      'callOperator': 'Llamar al operador',
+      'operatorButton': 'Operador',
+      'callOperatorConfirmTitle': '¿Llamar al operador?',
+      'callOperatorConfirmBody':
+          '¿Abrir la app de teléfono y llamar a {phone}?',
+      'callOperatorConfirmAction': 'Llamar',
+      'updateAppTitle': 'Actualiza la app',
+      'updateAppBody':
+          'Esta versión ya no es compatible. Instala la última versión desde la tienda.',
+      'updateAppButton': 'Actualizar',
+      'trackingTitle': 'SEGUIMIENTO',
+      'trackingLive': 'En vivo',
+      'trackingIdle': 'En espera',
+      'trackingNoPoint': 'La ubicación aún no está disponible.',
+      'trackingLoadFailed': 'No se pudo cargar la ubicación.',
+      'stageAccepted': 'Aceptada',
+      'stageOnTheWay': 'En camino',
+      'stageCleaning': 'Limpieza',
       'news': 'NOTICIAS',
       'newsEmpty': 'Aún no hay noticias.',
       'newsLoadFailed': 'No se pudo cargar la noticia',
@@ -795,6 +1193,13 @@ class S {
       'paymentUnpaid': 'Sin pagar',
       'paymentPending': 'Pago pendiente',
       'paymentFailed': 'Pago fallido',
+      'orderFrozen': 'PEDIDO CONGELADO',
+      'frozenPaymentFailed':
+          'El pago fue rechazado. Cambia la tarjeta o vuelve a intentarlo.',
+      'frozenNoCard': 'Añade una tarjeta para restaurar esta visita.',
+      'frozenAuthTimeout':
+          'El plazo de confirmación venció. Vuelve a intentar el pago.',
+      'retryPayment': 'Restaurar pago',
       'inboxTitle': 'Mensajes',
       'inboxEmpty': 'Aún no hay mensajes',
       'inboxLoadFailed': 'No se pudieron cargar los mensajes',
@@ -809,13 +1214,74 @@ class S {
       'orderFinishedTitle': 'PEDIDO COMPLETADO CON ÉXITO',
       'orderFinishedBody': 'Por favor, valora la limpieza',
       'ratingSubmitFailed': 'No se pudo guardar la valoración',
+      'surveyTitle': 'AYÚDANOS A MEJORAR',
+      'surveyBody':
+          'Unas respuestas rápidas nos ayudarán a mejorar el servicio.',
+      'surveyCleaningQuality': 'Calidad de la limpieza',
+      'surveyPunctuality': 'Puntualidad del equipo',
+      'surveyCommunication': 'Comunicación y amabilidad',
+      'surveyConvenience': 'Comodidad del servicio',
+      'surveyComment': '¿Qué podemos mejorar? (opcional)',
+      'surveyCommentHint': 'Comparte tus sugerencias',
+      'surveySubmit': 'Enviar opinión',
+      'surveySkip': 'Ahora no',
+      'surveySubmitFailed':
+          'No se pudo enviar la encuesta. Inténtalo de nuevo.',
       'profileSettingsSection': 'AJUSTES',
+      'paymentCardSection': 'TARJETA',
+      'paymentCardNone': 'No hay tarjeta vinculada',
+      'paymentCardExpiry': 'Cad {date}',
+      'paymentCardUnlink': 'Desvincular tarjeta',
+      'paymentCardAdd': 'Añadir tarjeta',
+      'paymentCardUnlinkTitle': 'DESVINCULAR TARJETA',
+      'paymentCardUnlinkConfirm':
+          'La tarjeta se eliminará de Stripe y ya no quedará guardada en tu cuenta.',
+      'paymentCardUnlinked': 'Tarjeta desvinculada',
+      'paymentCardUnlinkFailed':
+          'No se pudo desvincular la tarjeta. Inténtalo de nuevo.',
+      'paymentCardUnlinkRequested':
+          'La solicitud para desvincular la tarjeta se ha enviado al operador',
+      'ok': 'OK',
       'supportSecuritySection': 'SOPORTE Y SEGURIDAD',
       'savedProperties': 'Propiedades guardadas',
       'cleaningHistory': 'Historial de limpiezas',
       'cleaningHistoryEmpty': 'Aún no hay limpiezas completadas',
       'cleaningHistoryLoadFailed': 'No se pudo cargar el historial',
       'faq': 'FAQ',
+      'requests': 'Solicitudes',
+      'newRequest': 'Nueva solicitud',
+      'requestDetails': 'Detalles de la solicitud',
+      'requestActive': 'Activas',
+      'requestCompleted': 'Completadas',
+      'requestAll': 'Todas',
+      'requestsEmpty': 'Aún no hay solicitudes',
+      'requestsLoadFailed': 'No se pudieron cargar las solicitudes',
+      'feedbackPrompt': 'Cuéntanos cómo podemos ayudarte o mejorar.',
+      'disputePrompt': 'Describe el problema con esta limpieza.',
+      'requestMessageHint': 'Describe la situación…',
+      'addPhotos': 'Añadir fotos',
+      'photos': 'Fotos',
+      'requestPhotos': 'Fotos ({count}/5)',
+      'sendRequest': 'ENVIAR SOLICITUD',
+      'requestSubmitFailed': 'No se pudo enviar. Inténtalo de nuevo.',
+      'reportProblem': 'Informar de un problema',
+      'problemReported': 'Problema informado',
+      'reportProblemUntil': 'Disponible hasta {date}',
+      'operatorUpdates': 'Actualizaciones del operador',
+      'noOperatorUpdates': 'Aún no hay actualizaciones.',
+      'contactSupport': 'Abrir chat de soporte',
+      'relatedCleaning': 'Limpieza relacionada',
+      'remediationCleaning': 'Limpieza correctiva',
+      'resolution': 'Resolución',
+      'generalFeedback': 'Comentario general',
+      'cleaningDispute': 'Problema de limpieza',
+      'requestStatusNew': 'Nueva',
+      'requestStatusOpen': 'Abierta',
+      'requestStatusInProgress': 'En curso',
+      'requestStatusWaitingClient': 'Esperando tu respuesta',
+      'requestStatusResolved': 'Resuelta',
+      'requestStatusCompleted': 'Completada',
+      'requestStatusClosed': 'Cerrada',
       'addProperty': 'Añadir propiedad',
       'editProperty': 'Editar propiedad',
       'fixProperty': 'Corregir',
@@ -825,7 +1291,8 @@ class S {
       'propertyLoadFailed': 'No se pudo cargar la propiedad',
       'propertySaveFailed': 'No se pudo guardar la propiedad',
       'propertyTitleRequired': 'El título es obligatorio',
-      'propertyHousingRequired': 'Se requieren pies cuadrados, habitaciones y baños',
+      'propertyHousingRequired':
+          'Se requieren pies cuadrados, habitaciones y baños',
       'propertyIncomplete': 'Faltan el metraje, las habitaciones o los baños.',
       'propertySquareFootage': 'Metraje (sqft)',
       'propertySquareFootageHint': 'Área total',
@@ -842,20 +1309,60 @@ class S {
       'propertyAdditionalPhotos': 'Fotos adicionales',
       'propertyEntryInstructions': 'Instrucciones de entrada',
       'propertyEntryHint': 'Códigos, llaves, cómo entrar',
+      'propertyAddressLine1': 'Dirección',
+      'propertyAddressLine1Hint': '123 Main St',
+      'propertyAddressLine2': 'Apto, suite, unidad',
+      'propertyAddressLine2Hint': 'Apt 4B (opcional)',
+      'propertyCity': 'Ciudad',
+      'propertyState': 'Estado',
+      'propertyZip': 'Código ZIP',
+      'propertySelectState': 'Selecciona el estado',
+      'propertyAddressRequired': 'Introduce calle, ciudad, estado y ZIP',
+      'propertyZipInvalid': 'Introduce un ZIP de 5 dígitos',
+      'propertyStepAddress': 'DIRECCIÓN',
+      'propertyStepDescription': 'DATOS DE LA CASA',
+      'propertyStepInstructions': 'INSTRUCCIONES',
+      'propertyStepPhotos': 'NOMBRE Y FOTOS',
+      'propertyInstructionsPhotosHint':
+          'Si necesitas fotos de la casa o del acceso, puedes añadirlas en el siguiente paso.',
+      'propertyBedroomsShort': 'hab',
+      'propertyBathroomsShort': 'baños',
+      'propertyDelete': 'Eliminar propiedad',
+      'propertyDeleteTitle': 'ELIMINAR PROPIEDAD',
+      'propertyDeleteConfirm':
+          'Esta propiedad se eliminará de tu lista guardada.',
+      'propertyDeleteFailed': 'No se pudo eliminar la propiedad.',
+      'propertyMyTitle': 'MIS PROPIEDADES',
       'next': 'Siguiente',
       'payNow': 'Pagar',
+      'securePaymentMethod': 'Método de pago seguro',
+      'cardSetupHint':
+          'No se te cobrará ahora. Tu tarjeta se guarda de forma segura en Stripe.',
+      'cardSetupBefore': 'Añade una tarjeta para confirmar tu reserva.',
+      'cardAlreadyLinked': 'Ya hay una tarjeta de pago vinculada a tu cuenta.',
+      'cardSetupCancelled':
+          'La configuración de la tarjeta se canceló. Añade una tarjeta para confirmar tu reserva.',
+      'cardSetupPending': 'Esperando la confirmación de la tarjeta...',
+      'cardSetupContinue': 'Continuar',
       'bookingStepOf': 'PASO {current} DE {total}',
       'bookingStepProperty': 'Propiedad',
       'bookingStepService': 'Servicio',
       'bookingStepAddons': 'Extras',
       'bookingAddonsTitle': '¿Quieres extras?',
-      'bookingAddonsSubtitle': 'Puedes elegir varios extras o saltar este paso.',
+      'bookingAddonsSubtitle':
+          'Puedes elegir varios extras o saltar este paso.',
       'bookingAddonsNone': 'Ninguno',
       'bookingWindowsLabel': '¿Cuántas ventanas?',
       'bookingWindowsHint': 'Número de ventanas',
       'bookingWindowsRequired': 'Indica el número de ventanas',
+      'bookingWindowsInside': 'Por dentro',
+      'bookingWindowsOutside': 'Por fuera',
+      'bookingWindowsSidesRequired': 'Elige por dentro, por fuera o ambas',
+      'bookingWindowsFormula':
+          '\$5 por dentro, \$10 por fuera, \$15 ambas — por ventana',
       'bookingEstimateTitle': 'Estimación preliminar',
-      'bookingEstimateNote': 'Esta es una estimación preliminar. El precio y el tiempo finales pueden cambiar después de la revisión del gerente.',
+      'bookingEstimateNote':
+          'Esta es una estimación preliminar. El precio final puede cambiar después de la revisión del gerente.',
       'bookingEstimatePrice': 'Precio estimado',
       'bookingEstimateTime': 'Tiempo estimado',
       'bookingEstimateFailed': 'No se pudo calcular la estimación',
@@ -863,9 +1370,10 @@ class S {
       'bookingHoursValue': '{hours} h',
       'bookingStepSchedule': 'Horario',
       'bookingStepWishes': 'Deseos',
-      'bookingStepPayment': 'Pago',
+      'bookingStepPayment': 'Confirmar',
       'bookingPropertyTitle': '¿Dónde limpiamos?',
-      'bookingPropertySubtitle': 'Elige una propiedad guardada o añade una nueva.',
+      'bookingPropertySubtitle':
+          'Elige una propiedad guardada o añade una nueva.',
       'bookingServiceTitle': '¿Qué servicio necesitas?',
       'bookingServiceSubtitle': 'Elige un solo servicio principal.',
       'bookingScheduleTitle': '¿Cuándo vamos?',
@@ -894,8 +1402,8 @@ class S {
       'bookingWishesTitle': '¿Deseos especiales?',
       'bookingWishesSubtitle': 'Escribe instrucciones para la limpieza.',
       'bookingWishesHint': 'p. ej. más atención a la cocina…',
-      'bookingPaymentTitle': 'Revisar y pagar',
-      'bookingPaymentSubtitle': 'Verifica los datos antes del pago.',
+      'bookingPaymentTitle': 'Revisar y confirmar',
+      'bookingPaymentSubtitle': 'Añade una tarjeta para confirmar tu reserva.',
       'bookingSummaryProperty': 'Propiedad',
       'bookingSummaryService': 'Servicio',
       'bookingSummarySchedule': 'Tipo de horario',
@@ -958,16 +1466,36 @@ class S {
       'chatEditing': 'Редактирование сообщения',
       'chatEdit': 'Изменить',
       'chatDelete': 'Удалить',
-      'chatNotLinked': 'Привяжите клиентский аккаунт, чтобы пользоваться чатом.',
+      'chatNotLinked':
+          'Привяжите клиентский аккаунт, чтобы пользоваться чатом.',
       'welcomeBack': 'С ВОЗВРАЩЕНИЕМ',
       'hiName': 'Привет, {name}!',
       'hiGuest': 'Привет!',
       'homeTagline': 'Пора для следующего блеска вашего дома.',
       'bookNewCleaning': '+ Заказать клининг',
       'upcomingService': 'БЛИЖАЙШИЙ СЕРВИС',
+      'currentService': 'ТЕКУЩИЙ СЕРВИС',
       'serviceNotOrdered': 'Сервис ещё не заказан.',
       'specialistRushing': '{name} уже спешит к вам',
       'specialistOnTheWayHint': 'Ваш клинер в пути',
+      'trackingButton': 'Трекинг',
+      'callOperator': 'Позвонить оператору',
+      'operatorButton': 'Оператор',
+      'callOperatorConfirmTitle': 'Позвонить оператору?',
+      'callOperatorConfirmBody': 'Открыть телефон и позвонить {phone}?',
+      'callOperatorConfirmAction': 'Позвонить',
+      'updateAppTitle': 'Обновите приложение',
+      'updateAppBody':
+          'Эта версия больше не поддерживается. Установите последнюю версию из магазина.',
+      'updateAppButton': 'Обновить',
+      'trackingTitle': 'ТРЕКИНГ',
+      'trackingLive': 'Онлайн',
+      'trackingIdle': 'Ожидание',
+      'trackingNoPoint': 'Геопозиция клинера пока недоступна.',
+      'trackingLoadFailed': 'Не удалось загрузить геопозицию.',
+      'stageAccepted': 'Принят',
+      'stageOnTheWay': 'В пути',
+      'stageCleaning': 'Уборка',
       'news': 'НОВОСТИ',
       'newsEmpty': 'Новостей пока нет.',
       'newsLoadFailed': 'Не удалось загрузить новость',
@@ -1017,6 +1545,12 @@ class S {
       'paymentUnpaid': 'Не оплачено',
       'paymentPending': 'Ожидает оплаты',
       'paymentFailed': 'Ошибка оплаты',
+      'orderFrozen': 'ЗАКАЗ ЗАМОРОЖЕН',
+      'frozenPaymentFailed':
+          'Платёж отклонён. Замените карту или повторите оплату.',
+      'frozenNoCard': 'Чтобы восстановить визит, добавьте платёжную карту.',
+      'frozenAuthTimeout': 'Срок подтверждения оплаты истёк. Повторите оплату.',
+      'retryPayment': 'Восстановить оплату',
       'inboxTitle': 'Сообщения',
       'inboxEmpty': 'Сообщений пока нет',
       'inboxLoadFailed': 'Не удалось загрузить сообщения',
@@ -1031,13 +1565,73 @@ class S {
       'orderFinishedTitle': 'ЗАКАЗ УСПЕШНО ВЫПОЛНЕН',
       'orderFinishedBody': 'Пожалуйста, оцените уборку',
       'ratingSubmitFailed': 'Не удалось сохранить оценку',
+      'surveyTitle': 'ПОМОГИТЕ НАМ СТАТЬ ЛУЧШЕ',
+      'surveyBody': 'Несколько коротких ответов помогут нам улучшить сервис.',
+      'surveyCleaningQuality': 'Качество уборки',
+      'surveyPunctuality': 'Пунктуальность команды',
+      'surveyCommunication': 'Общение и вежливость',
+      'surveyConvenience': 'Удобство сервиса',
+      'surveyComment': 'Что нам улучшить? (необязательно)',
+      'surveyCommentHint': 'Поделитесь пожеланиями',
+      'surveySubmit': 'Отправить отзыв',
+      'surveySkip': 'Не сейчас',
+      'surveySubmitFailed': 'Не удалось отправить анкету. Попробуйте ещё раз.',
       'profileSettingsSection': 'НАСТРОЙКИ',
+      'paymentCardSection': 'ПЛАТЁЖНАЯ КАРТА',
+      'paymentCardNone': 'Карта не привязана',
+      'paymentCardExpiry': 'До {date}',
+      'paymentCardUnlink': 'Отвязать карту',
+      'paymentCardAdd': 'Добавить карту',
+      'paymentCardUnlinkTitle': 'ОТВЯЗАТЬ КАРТУ',
+      'paymentCardUnlinkConfirm':
+          'Карта будет удалена в Stripe и больше не сохранится в аккаунте.',
+      'paymentCardUnlinked': 'Карта отвязана',
+      'paymentCardUnlinkFailed':
+          'Не удалось отвязать карту. Попробуйте ещё раз.',
+      'paymentCardUnlinkRequested':
+          'Запрос на отвязывание карты отправлен оператору',
+      'ok': 'ОК',
       'supportSecuritySection': 'ПОДДЕРЖКА И БЕЗОПАСНОСТЬ',
       'savedProperties': 'Сохранённые объекты',
       'cleaningHistory': 'История уборок',
       'cleaningHistoryEmpty': 'Завершённых уборок пока нет',
       'cleaningHistoryLoadFailed': 'Не удалось загрузить историю',
       'faq': 'FAQ',
+      'requests': 'Обращения',
+      'newRequest': 'Новое обращение',
+      'requestDetails': 'Детали обращения',
+      'requestActive': 'Активные',
+      'requestCompleted': 'Завершённые',
+      'requestAll': 'Все',
+      'requestsEmpty': 'Обращений пока нет',
+      'requestsLoadFailed': 'Не удалось загрузить обращения',
+      'feedbackPrompt': 'Расскажите, как мы можем помочь или улучшить сервис.',
+      'disputePrompt': 'Опишите проблему с этой уборкой.',
+      'requestMessageHint': 'Опишите ситуацию…',
+      'addPhotos': 'Добавить фото',
+      'photos': 'Фото',
+      'requestPhotos': 'Фото ({count}/5)',
+      'sendRequest': 'ОТПРАВИТЬ',
+      'requestSubmitFailed':
+          'Не удалось отправить обращение. Попробуйте снова.',
+      'reportProblem': 'Сообщить о проблеме',
+      'problemReported': 'О проблеме сообщено',
+      'reportProblemUntil': 'Доступно до {date}',
+      'operatorUpdates': 'Обновления оператора',
+      'noOperatorUpdates': 'Обновлений пока нет.',
+      'contactSupport': 'Открыть чат поддержки',
+      'relatedCleaning': 'Связанная уборка',
+      'remediationCleaning': 'Повторная уборка',
+      'resolution': 'Решение',
+      'generalFeedback': 'Общий отзыв',
+      'cleaningDispute': 'Проблема с уборкой',
+      'requestStatusNew': 'Новое',
+      'requestStatusOpen': 'Открыто',
+      'requestStatusInProgress': 'В работе',
+      'requestStatusWaitingClient': 'Ожидает вас',
+      'requestStatusResolved': 'Решено',
+      'requestStatusCompleted': 'Завершено',
+      'requestStatusClosed': 'Закрыто',
       'addProperty': 'Добавить объект',
       'editProperty': 'Редактировать объект',
       'fixProperty': 'Исправить',
@@ -1064,20 +1658,60 @@ class S {
       'propertyAdditionalPhotos': 'Дополнительные фото',
       'propertyEntryInstructions': 'Инструкции для входа',
       'propertyEntryHint': 'Коды, ключи, как войти',
+      'propertyAddressLine1': 'Улица',
+      'propertyAddressLine1Hint': '123 Main St',
+      'propertyAddressLine2': 'Квартира, suite, unit',
+      'propertyAddressLine2Hint': 'Apt 4B (необязательно)',
+      'propertyCity': 'Город',
+      'propertyState': 'Штат',
+      'propertyZip': 'ZIP-код',
+      'propertySelectState': 'Выберите штат',
+      'propertyAddressRequired': 'Укажите улицу, город, штат и ZIP',
+      'propertyZipInvalid': 'Введите 5-значный ZIP',
+      'propertyStepAddress': 'АДРЕС',
+      'propertyStepDescription': 'О ДОМЕ',
+      'propertyStepInstructions': 'ИНСТРУКЦИИ',
+      'propertyStepPhotos': 'НАЗВАНИЕ И ФОТО',
+      'propertyInstructionsPhotosHint':
+          'Если нужны фото дома или доступа, их можно добавить на следующем шаге.',
+      'propertyBedroomsShort': 'сп.',
+      'propertyBathroomsShort': 'ван.',
+      'propertyDelete': 'Удалить объект',
+      'propertyDeleteTitle': 'УДАЛИТЬ ОБЪЕКТ',
+      'propertyDeleteConfirm': 'Объект будет удалён из сохранённых.',
+      'propertyDeleteFailed': 'Не удалось удалить объект.',
+      'propertyMyTitle': 'МОИ ОБЪЕКТЫ',
       'next': 'Далее',
       'payNow': 'Оплатить',
+      'securePaymentMethod': 'Secure payment method',
+      'cardSetupHint':
+          'You will not be charged now. Your card is saved securely by Stripe.',
+      'cardSetupBefore': 'Добавьте карту, чтобы подтвердить бронь.',
+      'cardAlreadyLinked': 'A payment card is already linked to your account.',
+      'cardSetupCancelled':
+          'Card setup was cancelled. Please add a card to confirm your booking.',
+      'cardSetupPending': 'Waiting for card confirmation...',
+      'cardSetupContinue': 'Продолжить',
       'bookingStepOf': 'ШАГ {current} ИЗ {total}',
       'bookingStepProperty': 'Объект уборки',
       'bookingStepService': 'Тип уборки',
       'bookingStepAddons': 'Доп. услуги',
       'bookingAddonsTitle': 'Нужны допы?',
-      'bookingAddonsSubtitle': 'Можно выбрать несколько услуг или пропустить шаг.',
+      'bookingAddonsSubtitle':
+          'Можно выбрать несколько услуг или пропустить шаг.',
       'bookingAddonsNone': 'Не выбрано',
       'bookingWindowsLabel': 'Сколько окон?',
       'bookingWindowsHint': 'Количество окон',
       'bookingWindowsRequired': 'Укажите количество окон',
+      'bookingWindowsInside': 'Изнутри',
+      'bookingWindowsOutside': 'Снаружи',
+      'bookingWindowsSidesRequired':
+          'Выберите изнутри, снаружи или оба варианта',
+      'bookingWindowsFormula':
+          '\$5 изнутри, \$10 снаружи, \$15 и так и так — за одно окно',
       'bookingEstimateTitle': 'Предварительный расчёт',
-      'bookingEstimateNote': 'Это предварительный расчёт. Итоговые цена и время могут измениться после проверки менеджером.',
+      'bookingEstimateNote':
+          'Это предварительный расчёт. Итоговая цена может измениться после проверки менеджером.',
       'bookingEstimatePrice': 'Ориентировочная цена',
       'bookingEstimateTime': 'Ориентировочное время',
       'bookingEstimateFailed': 'Не удалось посчитать смету',
@@ -1085,9 +1719,10 @@ class S {
       'bookingHoursValue': '{hours} ч',
       'bookingStepSchedule': 'Расписание',
       'bookingStepWishes': 'Пожелания',
-      'bookingStepPayment': 'Оплата',
+      'bookingStepPayment': 'Подтверждение',
       'bookingPropertyTitle': 'Где убирать?',
-      'bookingPropertySubtitle': 'Выберите сохранённый объект или добавьте новый.',
+      'bookingPropertySubtitle':
+          'Выберите сохранённый объект или добавьте новый.',
       'bookingServiceTitle': 'Какая уборка нужна?',
       'bookingServiceSubtitle': 'Выберите одну основную услугу.',
       'bookingScheduleTitle': 'Когда приехать?',
@@ -1111,13 +1746,16 @@ class S {
       'bookingPreferredStartHint':
           'Свободное окно длиннее уборки. Выберите старт так, чтобы визит поместился в него.',
       'bookingAvailabilityFailed': 'Не удалось проверить доступность',
-      'bookingHoldFailed': 'Не удалось зарезервировать время. Выберите другой слот.',
-      'bookingHeld': 'Время зарезервировано. Завершите заявку, чтобы сохранить слот.',
+      'bookingHoldFailed':
+          'Не удалось зарезервировать время. Выберите другой слот.',
+      'bookingHeld':
+          'Время зарезервировано. Завершите заявку, чтобы сохранить слот.',
       'bookingWishesTitle': 'Особые пожелания?',
       'bookingWishesSubtitle': 'Укажите инструкции к уборке.',
-      'bookingWishesHint': 'например, больше внимания кухне, ключи под ковриком…',
-      'bookingPaymentTitle': 'Проверка и оплата',
-      'bookingPaymentSubtitle': 'Проверьте данные перед оплатой.',
+      'bookingWishesHint':
+          'например, больше внимания кухне, ключи под ковриком…',
+      'bookingPaymentTitle': 'Проверка и подтверждение',
+      'bookingPaymentSubtitle': 'Добавьте карту, чтобы подтвердить бронь.',
       'bookingSummaryProperty': 'Объект',
       'bookingSummaryService': 'Услуга',
       'bookingSummarySchedule': 'Тип расписания',

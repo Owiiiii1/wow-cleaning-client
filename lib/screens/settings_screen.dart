@@ -13,8 +13,7 @@ class SettingsScreen extends StatelessWidget {
       listenable: LocaleController.instance,
       builder: (context, _) {
         final s = S.current;
-        final currentCode =
-            AppLocales.codeOf(LocaleController.instance.locale);
+        final currentCode = AppLocales.codeOf(LocaleController.instance.locale);
 
         return Scaffold(
           backgroundColor: AppColors.white,
@@ -70,8 +69,9 @@ class SettingsScreen extends StatelessWidget {
                     ],
                     onChanged: (code) {
                       if (code == null) return;
-                      LocaleController.instance
-                          .setLocale(AppLocales.fromCode(code));
+                      LocaleController.instance.setLocale(
+                        AppLocales.fromCode(code),
+                      );
                     },
                   ),
                 ),

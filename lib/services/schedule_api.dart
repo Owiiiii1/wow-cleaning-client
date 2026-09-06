@@ -39,6 +39,8 @@ class ScheduleOrder {
     this.bedrooms,
     this.bathrooms,
     this.windowCount,
+    this.windowsInside = false,
+    this.windowsOutside = false,
     this.recurrence,
     this.service,
     this.addons = const [],
@@ -57,7 +59,15 @@ class ScheduleOrder {
     this.canPay = false,
     this.canCancel = false,
     this.canReschedule = false,
+    this.canOpenDispute = false,
+    this.disputeDeadlineAt,
+    this.activeDispute,
     this.rating,
+    this.locationTrackingActive = false,
+    this.isFrozen = false,
+    this.freezeReasonCode,
+    this.freezeReasonText,
+    this.paymentActionRequiredBy,
   });
 
   final int id;
@@ -71,6 +81,8 @@ class ScheduleOrder {
   final int? bedrooms;
   final int? bathrooms;
   final int? windowCount;
+  final bool windowsInside;
+  final bool windowsOutside;
   final String? recurrence;
   final OrderServiceItem? service;
   final List<OrderServiceItem> addons;
@@ -89,9 +101,20 @@ class ScheduleOrder {
   final bool canPay;
   final bool canCancel;
   final bool canReschedule;
+  final bool canOpenDispute;
+  final String? disputeDeadlineAt;
+  final Map<String, dynamic>? activeDispute;
   final int? rating;
+  final bool locationTrackingActive;
+  final bool isFrozen;
+  final String? freezeReasonCode;
+  final String? freezeReasonText;
+  final String? paymentActionRequiredBy;
 
   factory ScheduleOrder.fromJson(Map<String, dynamic> json) {
+    final actions = json['available_actions'] is Map
+        ? Map<String, dynamic>.from(json['available_actions'] as Map)
+        : <String, dynamic>{};
     final addonTitles = <String>[];
     final rawAddonTitles = json['addon_titles'];
     if (rawAddonTitles is List) {
@@ -105,7 +128,9 @@ class ScheduleOrder {
     if (rawAddons is List) {
       for (final item in rawAddons) {
         if (item is Map) {
-          addons.add(OrderServiceItem.fromJson(Map<String, dynamic>.from(item)));
+          addons.add(
+            OrderServiceItem.fromJson(Map<String, dynamic>.from(item)),
+          );
         }
       }
     }
@@ -117,7 +142,8 @@ class ScheduleOrder {
     return ScheduleOrder(
       id: (json['id'] as num).toInt(),
       type: json['type']?.toString(),
-      serviceName: json['service_name']?.toString() ??
+      serviceName:
+          json['service_name']?.toString() ??
           json['title']?.toString() ??
           service?.title ??
           '',
@@ -129,10 +155,15 @@ class ScheduleOrder {
       bedrooms: (json['bedrooms'] as num?)?.toInt(),
       bathrooms: (json['bathrooms'] as num?)?.toInt(),
       windowCount: (json['window_count'] as num?)?.toInt(),
+      windowsInside:
+          json['windows_inside'] == true || json['windows_inside'] == 1,
+      windowsOutside:
+          json['windows_outside'] == true || json['windows_outside'] == 1,
       recurrence: json['recurrence']?.toString(),
       service: service,
       addons: addons,
-      addonCount: (json['addon_count'] as num?)?.toInt() ??
+      addonCount:
+          (json['addon_count'] as num?)?.toInt() ??
           (addons.isNotEmpty ? addons.length : addonTitles.length),
       addonTitles: addonTitles,
       status: json['status']?.toString(),
@@ -148,7 +179,26 @@ class ScheduleOrder {
       canPay: json['can_pay'] == true,
       canCancel: json['can_cancel'] == true,
       canReschedule: json['can_reschedule'] == true,
+      canOpenDispute:
+          json['can_open_dispute'] == true ||
+          actions['can_open_dispute'] == true,
+      disputeDeadlineAt:
+          (json['dispute_deadline_at'] ?? actions['dispute_deadline_at'])
+              ?.toString(),
+      activeDispute:
+          (json['active_dispute'] ?? actions['active_dispute']) is Map
+          ? Map<String, dynamic>.from(
+              (json['active_dispute'] ?? actions['active_dispute']) as Map,
+            )
+          : null,
       rating: (json['rating'] as num?)?.toInt(),
+      locationTrackingActive:
+          json['location_tracking_active'] == true ||
+          json['location_tracking_active'] == 1,
+      isFrozen: json['is_frozen'] == true || json['is_frozen'] == 1,
+      freezeReasonCode: json['freeze_reason_code']?.toString(),
+      freezeReasonText: json['freeze_reason_text']?.toString(),
+      paymentActionRequiredBy: json['payment_action_required_by']?.toString(),
     );
   }
 }
@@ -217,6 +267,9 @@ class ScheduleApi {
       orderRaw['can_cancel'] ??= actions['can_cancel'];
       orderRaw['can_pay'] ??= actions['can_pay'];
       orderRaw['can_reschedule'] ??= actions['can_reschedule'];
+      orderRaw['can_open_dispute'] ??= actions['can_open_dispute'];
+      orderRaw['dispute_deadline_at'] ??= actions['dispute_deadline_at'];
+      orderRaw['active_dispute'] ??= actions['active_dispute'];
     }
 
     return OrderDetailData(
@@ -228,6 +281,32 @@ class ScheduleApi {
 
   Future<void> deleteRequest(int id) async {
     await _client.deleteJson('client/orders/$id');
+  }
+
+  Future<Map<String, dynamic>> paymentAction(int id) async {
+    final payload = await _client.postJson(
+      'client/orders/$id/payment-action',
+      {},
+    );
+    return (payload['data'] as Map?)?.cast<String, dynamic>() ?? {};
+  }
+
+  Future<String> retryPayment(int id) async {
+    final payload = await _client.postJson(
+      'client/orders/$id/payment-retry',
+      {},
+    );
+    final data = (payload['data'] as Map?)?.cast<String, dynamic>() ?? {};
+    return data['status']?.toString() ?? 'scheduled';
+  }
+
+  Future<String> confirmPaymentAction(int id) async {
+    final payload = await _client.postJson(
+      'client/orders/$id/payment-action/confirm',
+      {},
+    );
+    final data = (payload['data'] as Map?)?.cast<String, dynamic>() ?? {};
+    return data['status']?.toString() ?? 'pending';
   }
 
   List<ScheduleOrder> _parseList(dynamic raw) {

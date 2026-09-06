@@ -4,15 +4,38 @@ import 'package:wow_cleaning/l10n/locale_controller.dart';
 import 'package:wow_cleaning/screens/cleaning_history_screen.dart';
 import 'package:wow_cleaning/screens/login_screen.dart';
 import 'package:wow_cleaning/screens/properties_list_screen.dart';
+import 'package:wow_cleaning/screens/requests_screen.dart';
 import 'package:wow_cleaning/screens/settings_screen.dart';
 import 'package:wow_cleaning/services/api_client.dart';
+import 'package:wow_cleaning/services/payment_method_api.dart';
 import 'package:wow_cleaning/services/session_store.dart';
+import 'package:wow_cleaning/services/stripe_payment_coordinator.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
+import 'package:wow_cleaning/widgets/branded_button.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key, required this.loginData});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({
+    super.key,
+    required this.loginData,
+    this.isActive = true,
+    this.refreshTick = 0,
+  });
 
   final Map<String, dynamic> loginData;
+  final bool isActive;
+  final int refreshTick;
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final PaymentMethodApi _paymentMethodApi = PaymentMethodApi();
+  final StripePaymentCoordinator _stripe = StripePaymentCoordinator();
+  bool _loadingCard = true;
+  PaymentMethodStatus? _card;
+
+  Map<String, dynamic> get loginData => widget.loginData;
 
   Map<String, dynamic> get _profile =>
       (loginData['profile'] as Map?)?.cast<String, dynamic>() ?? {};
@@ -38,10 +61,100 @@ class ProfileScreen extends StatelessWidget {
     return '';
   }
 
-  Future<void> _openSettings(BuildContext context) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+  @override
+  void initState() {
+    super.initState();
+    _loadCard();
+  }
+
+  @override
+  void didUpdateWidget(covariant ProfileScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final becameActive = widget.isActive && !oldWidget.isActive;
+    final tickWhileActive =
+        widget.isActive && widget.refreshTick != oldWidget.refreshTick;
+    if (becameActive || tickWhileActive) {
+      _loadCard();
+    }
+  }
+
+  Future<void> _loadCard() async {
+    try {
+      final status = await _paymentMethodApi.fetch();
+      if (!mounted) return;
+      setState(() {
+        _card = status;
+        _loadingCard = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _loadingCard = false);
+    }
+  }
+
+  Future<void> _requestUnlink() async {
+    final s = S.current;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(s.paymentCardUnlinkTitle),
+        content: Text(s.paymentCardUnlinkConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(s.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(s.paymentCardUnlink),
+          ),
+        ],
+      ),
     );
+    if (confirmed != true) return;
+
+    setState(() => _loadingCard = true);
+    try {
+      final status = await _paymentMethodApi.unlink();
+      if (!mounted) return;
+      setState(() {
+        _card = status;
+        _loadingCard = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.paymentCardUnlinked)));
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _loadingCard = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.paymentCardUnlinkFailed)));
+    }
+  }
+
+  Future<void> _addCard() async {
+    setState(() => _loadingCard = true);
+    try {
+      final status = await _stripe.setupCard();
+      if (!mounted) return;
+      setState(() {
+        _card = status;
+        _loadingCard = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _loadingCard = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(S.current.cardSetupCancelled)));
+    }
+  }
+
+  Future<void> _openSettings(BuildContext context) async {
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
   }
 
   Future<void> _logout(BuildContext context) async {
@@ -68,7 +181,9 @@ class ProfileScreen extends StatelessWidget {
         final s = S.current;
         final name = _name.isEmpty ? s.hiGuest : _name;
         final email = _email;
-        final initial = name.isNotEmpty ? name.characters.first.toUpperCase() : '?';
+        final initial = name.isNotEmpty
+            ? name.characters.first.toUpperCase()
+            : '?';
 
         return ColoredBox(
           color: AppColors.background,
@@ -85,10 +200,7 @@ class ProfileScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColors.pictonBlue.withValues(alpha: 0.12),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 4,
-                        ),
+                        border: Border.all(color: Colors.white, width: 4),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.glowShadow,
@@ -151,6 +263,21 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ],
+              const SizedBox(height: 24),
+              _SectionTitle(title: s.paymentCardSection),
+              const SizedBox(height: 10),
+              _PaymentCardTile(
+                loading: _loadingCard,
+                card: _card?.hasCard == true ? _card?.paymentMethod : null,
+                noneLabel: s.paymentCardNone,
+                unlinkLabel: s.paymentCardUnlink,
+                expiryLabel: (_card?.paymentMethod?.expiryLabel != null)
+                    ? s.paymentCardExpiry(_card!.paymentMethod!.expiryLabel!)
+                    : null,
+                onUnlink: _requestUnlink,
+                addLabel: s.paymentCardAdd,
+                onAdd: _addCard,
+              ),
               const SizedBox(height: 28),
               _SectionTitle(title: s.profileSettingsSection),
               const SizedBox(height: 10),
@@ -181,9 +308,13 @@ class ProfileScreen extends StatelessWidget {
               _SectionTitle(title: s.supportSecuritySection),
               const SizedBox(height: 10),
               _ProfileTile(
-                icon: Icons.help_outline_rounded,
-                label: s.faq,
-                onTap: null,
+                icon: Icons.support_agent_rounded,
+                label: s.requests,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const RequestsScreen()),
+                  );
+                },
               ),
               const SizedBox(height: 10),
               _ProfileTile(
@@ -241,9 +372,7 @@ class _ProfileTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    final color = danger
-        ? const Color(0xFFE53935)
-        : AppColors.darkGray;
+    final color = danger ? const Color(0xFFE53935) : AppColors.darkGray;
     final iconBg = danger
         ? const Color(0xFFE53935).withValues(alpha: 0.1)
         : AppColors.pictonBlue.withValues(alpha: 0.12);
@@ -298,6 +427,140 @@ class _ProfileTile extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentCardTile extends StatelessWidget {
+  const _PaymentCardTile({
+    required this.loading,
+    required this.card,
+    required this.noneLabel,
+    required this.unlinkLabel,
+    required this.addLabel,
+    this.expiryLabel,
+    this.onUnlink,
+    this.onAdd,
+  });
+
+  final bool loading;
+  final SavedPaymentMethod? card;
+  final String noneLabel;
+  final String unlinkLabel;
+  final String addLabel;
+  final String? expiryLabel;
+  final VoidCallback? onUnlink;
+  final VoidCallback? onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.glowShadow,
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.pictonBlue.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.credit_card_rounded,
+                    color: AppColors.pictonBlue,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: loading
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              card?.displayLabel ?? noneLabel,
+                              style: AppFonts.montserrat(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.darkGray,
+                              ),
+                            ),
+                            if (card != null && expiryLabel != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                expiryLabel!,
+                                style: AppFonts.body(
+                                  fontSize: 12,
+                                  color: AppColors.darkGray.withValues(
+                                    alpha: 0.55,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                ),
+              ],
+            ),
+            if (!loading && card != null && onUnlink != null) ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 40,
+                child: OutlinedButton(
+                  onPressed: onUnlink,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFE53935),
+                    side: const BorderSide(color: Color(0xFFE53935)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    unlinkLabel,
+                    style: AppFonts.montserrat(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFE53935),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            if (!loading && card == null && onAdd != null) ...[
+              const SizedBox(height: 12),
+              BrandedButton(label: addLabel, onPressed: onAdd),
+            ],
+          ],
         ),
       ),
     );

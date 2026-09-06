@@ -70,13 +70,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   void _openOrder(ScheduleOrder order) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => OrderDetailScreen(orderId: order.id),
-      ),
-    ).then((_) {
-      if (mounted) _load();
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (_) => OrderDetailScreen(orderId: order.id),
+          ),
+        )
+        .then((_) {
+          if (mounted) _load();
+        });
   }
 
   @override
@@ -239,10 +241,7 @@ class _SectionCard extends StatelessWidget {
               ),
             ),
           ],
-          if (footer != null) ...[
-            const SizedBox(height: 6),
-            footer!,
-          ],
+          if (footer != null) ...[const SizedBox(height: 6), footer!],
         ],
       ),
     );

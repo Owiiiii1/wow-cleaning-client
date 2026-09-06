@@ -4,6 +4,7 @@ import 'package:wow_cleaning/screens/property_detail_screen.dart';
 import 'package:wow_cleaning/screens/property_form_screen.dart';
 import 'package:wow_cleaning/services/properties_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
+import 'package:wow_cleaning/widgets/property_card.dart';
 
 class PropertiesListScreen extends StatefulWidget {
   const PropertiesListScreen({super.key});
@@ -46,10 +47,21 @@ class _PropertiesListScreenState extends State<PropertiesListScreen> {
   }
 
   Future<void> _openAdd() async {
-    final created = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => const PropertyFormScreen()),
-    );
+    final created = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => const PropertyFormScreen()));
     if (created == true) {
+      await _load();
+    }
+  }
+
+  Future<void> _openDetail(ClientPropertyItem item) async {
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => PropertyDetailScreen(propertyId: item.id),
+      ),
+    );
+    if (changed == true) {
       await _load();
     }
   }
@@ -65,7 +77,7 @@ class _PropertiesListScreenState extends State<PropertiesListScreen> {
         elevation: 0,
         foregroundColor: AppColors.darkGray,
         title: Text(
-          s.savedProperties,
+          s.propertyMyTitle,
           style: AppFonts.headline(fontSize: 18, color: AppColors.darkGray),
         ),
       ),
@@ -78,14 +90,14 @@ class _PropertiesListScreenState extends State<PropertiesListScreen> {
           children: [
             SizedBox(
               width: double.infinity,
-              height: 48,
+              height: 52,
               child: FilledButton.icon(
                 onPressed: _openAdd,
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.pictonBlue,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(28),
                   ),
                 ),
                 icon: const Icon(Icons.add_rounded),
@@ -99,7 +111,7 @@ class _PropertiesListScreenState extends State<PropertiesListScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             if (_loading)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 40),
@@ -108,118 +120,48 @@ class _PropertiesListScreenState extends State<PropertiesListScreen> {
                 ),
               )
             else if (_error != null)
-              Text(
-                _error!,
-                style: AppFonts.body(color: Colors.red.shade700),
-              )
+              Text(_error!, style: AppFonts.body(color: Colors.red.shade700))
             else if (_items.isEmpty)
-              Text(
-                s.propertiesEmpty,
-                style: AppFonts.body(
-                  color: AppColors.darkGray.withValues(alpha: 0.6),
+              Padding(
+                padding: const EdgeInsets.only(top: 48),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 88,
+                      height: 88,
+                      decoration: BoxDecoration(
+                        color: AppColors.pictonBlue.withValues(alpha: 0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.home_work_outlined,
+                        size: 40,
+                        color: AppColors.pictonBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      s.propertiesEmpty,
+                      textAlign: TextAlign.center,
+                      style: AppFonts.body(
+                        fontSize: 15,
+                        color: AppColors.darkGray.withValues(alpha: 0.65),
+                      ),
+                    ),
+                  ],
                 ),
               )
             else
               ..._items.map(
                 (item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _PropertyCard(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: PropertyCard(
                     item: item,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              PropertyDetailScreen(propertyId: item.id),
-                        ),
-                      );
-                    },
+                    onTap: () => _openDetail(item),
                   ),
                 ),
               ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PropertyCard extends StatelessWidget {
-  const _PropertyCard({required this.item, required this.onTap});
-
-  final ClientPropertyItem item;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.glowShadow,
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: item.mainImageUrl != null && item.mainImageUrl!.isNotEmpty
-                    ? Image.network(
-                        item.mainImageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stack) => Container(
-                          color: AppColors.pictonBlue.withValues(alpha: 0.1),
-                          alignment: Alignment.center,
-                          child: const Icon(Icons.home_work_outlined,
-                              color: AppColors.pictonBlue),
-                        ),
-                      )
-                    : Container(
-                        color: AppColors.pictonBlue.withValues(alpha: 0.1),
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.home_work_outlined,
-                            color: AppColors.pictonBlue, size: 36),
-                      ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: AppFonts.montserrat(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.darkGray,
-                      ),
-                    ),
-                    if ((item.address ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        item.address!,
-                        style: AppFonts.body(
-                          fontSize: 13,
-                          color: AppColors.darkGray.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

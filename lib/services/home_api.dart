@@ -22,10 +22,7 @@ class HomeNewsItem {
 }
 
 class SpecialistOnTheWay {
-  SpecialistOnTheWay({
-    required this.cleanerName,
-    required this.orderId,
-  });
+  SpecialistOnTheWay({required this.cleanerName, required this.orderId});
 
   final String cleanerName;
   final int orderId;
@@ -43,12 +40,14 @@ class HomeData {
     required this.userName,
     this.nextCleaning,
     this.specialistOnTheWay,
+    this.operatorPhone,
     required this.news,
   });
 
   final String userName;
   final ScheduleOrder? nextCleaning;
   final SpecialistOnTheWay? specialistOnTheWay;
+  final String? operatorPhone;
   final List<HomeNewsItem> news;
 }
 
@@ -108,6 +107,7 @@ class HomeApi {
       specialistOnTheWay: specialistRaw is Map<String, dynamic>
           ? SpecialistOnTheWay.fromJson(specialistRaw)
           : null,
+      operatorPhone: _nullablePhone(data['operator_phone']),
       news: news,
     );
   }
@@ -117,4 +117,10 @@ class HomeApi {
     final data = payload['data'] as Map<String, dynamic>? ?? {};
     return NewsDetail.fromJson(data);
   }
+}
+
+String? _nullablePhone(dynamic value) {
+  final raw = value?.toString().trim();
+  if (raw == null || raw.isEmpty) return null;
+  return raw;
 }

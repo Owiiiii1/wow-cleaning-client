@@ -11,6 +11,8 @@ class BookingState {
   CleaningServiceItem? service;
   final List<CleaningServiceItem> addons = [];
   int windowCount = 0;
+  bool windowsInside = false;
+  bool windowsOutside = false;
   BookingQuote? quote;
   BookingScheduleType scheduleType = BookingScheduleType.oneTime;
   BookingRecurrence recurrence = BookingRecurrence.weekly;
@@ -22,16 +24,12 @@ class BookingState {
   bool availabilityChecked = false;
   String notes = '';
 
-  bool get canGoProperty =>
-      property != null && property!.hasHousingParams;
+  bool get canGoProperty => property != null && property!.hasHousingParams;
   bool get canGoService => service != null;
   bool get canGoAddons =>
-      !hasWindowCleaning || windowCount > 0;
+      !hasWindowCleaning || (windowCount > 0 && hasWindowSides);
   bool get canGoSchedule =>
-      date != null &&
-      holdId != null &&
-      selectedWindow != null &&
-      time != null;
+      date != null && holdId != null && selectedWindow != null && time != null;
 
   void clearAvailability() {
     windows = [];
@@ -40,10 +38,12 @@ class BookingState {
     time = null;
     availabilityChecked = false;
   }
+
   bool get canGoWishes => true;
 
-  bool get hasWindowCleaning =>
-      addons.any((item) => item.isWindowCleaning);
+  bool get hasWindowCleaning => addons.any((item) => item.isWindowCleaning);
+
+  bool get hasWindowSides => windowsInside || windowsOutside;
 
   List<int> get addonIds => addons.map((item) => item.id).toList();
 
@@ -53,6 +53,8 @@ class BookingState {
       addons.removeAt(index);
       if (item.isWindowCleaning) {
         windowCount = 0;
+        windowsInside = false;
+        windowsOutside = false;
       }
       return;
     }

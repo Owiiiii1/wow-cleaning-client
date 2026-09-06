@@ -103,8 +103,10 @@ class _AuthTextFieldState extends State<AuthTextField> {
         ),
         filled: true,
         fillColor: AppColors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         suffixIcon: showToggle
             ? IconButton(
                 onPressed: () => setState(() => _obscured = !_obscured),
@@ -168,9 +170,10 @@ class _AuthMascotBadgeState extends State<AuthMascotBadge>
     return AnimatedBuilder(
       animation: _float,
       builder: (context, child) {
-        final dy = Tween<double>(begin: -5, end: 5).evaluate(
-          CurvedAnimation(parent: _float, curve: Curves.easeInOut),
-        );
+        final dy = Tween<double>(
+          begin: -5,
+          end: 5,
+        ).evaluate(CurvedAnimation(parent: _float, curve: Curves.easeInOut));
         return Transform.translate(offset: Offset(0, dy), child: child);
       },
       child: SizedBox(

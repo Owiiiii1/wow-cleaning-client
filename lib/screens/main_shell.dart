@@ -16,6 +16,7 @@ import 'package:wow_cleaning/widgets/app_header.dart';
 import 'package:wow_cleaning/widgets/bottom_nav_panel.dart';
 import 'package:wow_cleaning/widgets/inbox_message_modal.dart';
 import 'package:wow_cleaning/widgets/order_finished_modal.dart';
+import 'package:wow_cleaning/widgets/service_survey_modal.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key, required this.loginData});
@@ -117,6 +118,17 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       return;
     }
 
+    if (read == true && message.isFinishedRating) {
+      await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => ServiceSurveyModal(messageId: message.id),
+      );
+      if (!mounted) {
+        return;
+      }
+    }
+
     _showingInboxModal = false;
     if (read == true) {
       _unreadQueue.removeWhere((item) => item.id == message.id);
@@ -128,9 +140,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   Future<void> _openInbox() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const InboxListScreen()),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const InboxListScreen()));
     if (mounted) {
       _bumpContent();
       _refreshUnread();
@@ -176,10 +188,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           backgroundColor: AppColors.background,
           body: Column(
             children: [
-              AppHeader(
-                hasUnread: _inboxUnread > 0,
-                onBellTap: _openInbox,
-              ),
+              AppHeader(hasUnread: _inboxUnread > 0, onBellTap: _openInbox),
               Expanded(
                 child: IndexedStack(
                   index: _tab.index,
@@ -203,7 +212,11 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                         }
                       },
                     ),
-                    ProfileScreen(loginData: widget.loginData),
+                    ProfileScreen(
+                      loginData: widget.loginData,
+                      isActive: _tab == BottomNavTab.profile,
+                      refreshTick: _contentTick,
+                    ),
                   ],
                 ),
               ),

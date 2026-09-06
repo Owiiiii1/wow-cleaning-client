@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/screens/property_detail_screen.dart';
+import 'package:wow_cleaning/screens/request_detail_screen.dart';
+import 'package:wow_cleaning/screens/request_form_screen.dart';
 import 'package:wow_cleaning/screens/schedule_status.dart';
 import 'package:wow_cleaning/services/api_client.dart';
 import 'package:wow_cleaning/services/schedule_api.dart';
+import 'package:wow_cleaning/services/payment_action_service.dart';
+import 'package:wow_cleaning/services/stripe_payment_coordinator.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
+import 'package:wow_cleaning/widgets/live_tracking_map_sheet.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   const OrderDetailScreen({super.key, required this.orderId});
@@ -18,9 +23,12 @@ class OrderDetailScreen extends StatefulWidget {
 class _OrderDetailScreenState extends State<OrderDetailScreen>
     with WidgetsBindingObserver {
   final ScheduleApi _api = ScheduleApi();
+  final PaymentActionService _paymentActions = PaymentActionService();
+  final StripePaymentCoordinator _stripe = StripePaymentCoordinator();
   OrderDetailData? _data;
   bool _loading = true;
   bool _deleting = false;
+  bool _paying = false;
   String? _error;
 
   @override
@@ -165,17 +173,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen>
           ),
           title: Text(
             s.deleteRequestTitle,
-            style: AppFonts.headline(
-              fontSize: 18,
-              color: AppColors.darkLiver,
-            ),
+            style: AppFonts.headline(fontSize: 18, color: AppColors.darkLiver),
           ),
           content: Text(
             s.deleteRequestConfirm,
-            style: AppFonts.body(
-              fontSize: 15,
-              color: AppColors.darkLiver,
-            ),
+            style: AppFonts.body(fontSize: 15, color: AppColors.darkLiver),
           ),
           actions: [
             TextButton(
@@ -217,15 +219,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen>
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _deleting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.displayMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.displayMessage)));
     } catch (_) {
       if (!mounted) return;
       setState(() => _deleting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.current.deleteRequestFailed)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(S.current.deleteRequestFailed)));
     }
   }
 
@@ -236,15 +238,77 @@ class _OrderDetailScreenState extends State<OrderDetailScreen>
       'unpaid' => s.paymentUnpaid,
       'pending' || 'checkout_created' => s.paymentPending,
       'failed' => s.paymentFailed,
+      'no_card' => s.paymentCardNone,
+      'requires_action' => s.paymentPending,
+      'refunded' => 'Refunded',
       _ => status.replaceAll('_', ' '),
     };
+  }
+
+  String _freezeReason(S s, ScheduleOrder order) {
+    return switch (order.freezeReasonCode) {
+      'no_card' => s.frozenNoCard,
+      'payment_auth_timeout' => s.frozenAuthTimeout,
+      _ =>
+        order.freezeReasonText?.trim().isNotEmpty == true
+            ? order.freezeReasonText!
+            : s.frozenPaymentFailed,
+    };
+  }
+
+  Future<void> _restorePayment() async {
+    final order = _data?.order;
+    if (order == null || _paying) return;
+    setState(() => _paying = true);
+    try {
+      if (order.paymentStatus == 'requires_action') {
+        await _paymentActions.confirm(order.id);
+      } else {
+        if (order.paymentStatus == 'no_card') {
+          await _stripe.setupCard();
+        }
+        await _api.retryPayment(order.id);
+      }
+      await _load();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            error is ApiException
+                ? error.displayMessage
+                : S.current.inboxActionFailed,
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _paying = false);
+    }
+  }
+
+  Future<void> _openDispute() async {
+    final created = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RequestFormScreen(orderId: widget.orderId),
+      ),
+    );
+    if (created != null && mounted) await _load();
+  }
+
+  void _openActiveDispute(Map<String, dynamic> dispute) {
+    final id = (dispute['id'] as num?)?.toInt();
+    if (id == null) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => RequestDetailScreen(requestId: id)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final s = S.current;
     final order = _data?.order;
-    final paymentStatus = _data?.paymentSummary['last_status']?.toString() ??
+    final paymentStatus =
+        _data?.paymentSummary['last_status']?.toString() ??
         order?.paymentStatus;
 
     return Scaffold(
@@ -263,128 +327,274 @@ class _OrderDetailScreenState extends State<OrderDetailScreen>
               child: CircularProgressIndicator(color: AppColors.pictonBlue),
             )
           : _error != null && _data == null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      _error!,
-                      textAlign: TextAlign.center,
-                      style: AppFonts.body(color: AppColors.darkGray),
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: AppFonts.body(color: AppColors.darkGray),
+                ),
+              ),
+            )
+          : order == null
+          ? const SizedBox.shrink()
+          : RefreshIndicator(
+              color: AppColors.pictonBlue,
+              onRefresh: () => _load(),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 36),
+                children: [
+                  _HeroHeader(
+                    order: order,
+                    statusLabel: scheduleStatusLabel(
+                      s,
+                      order.status,
+                      order.operatorConfirmed,
                     ),
+                    paymentLabel: _paymentLabel(s, paymentStatus),
                   ),
-                )
-              : order == null
-                  ? const SizedBox.shrink()
-                  : RefreshIndicator(
-                      color: AppColors.pictonBlue,
-                      onRefresh: () => _load(),
-                      child: ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 36),
+                  if (order.isFrozen) ...[
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFEBEE),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: const Color(0xFFE53935),
+                          width: 2,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                        _HeroHeader(
-                          order: order,
-                          statusLabel: scheduleStatusLabel(
-                            s,
-                            order.status,
-                            order.operatorConfirmed,
-                          ),
-                          paymentLabel: _paymentLabel(s, paymentStatus),
-                        ),
-                        const SizedBox(height: 16),
-                        _VisitCard(
-                          label: s.orderVisit,
-                          typeLabel: _scheduleTypeLabel(s, order),
-                          date: _formatDate(order.date),
-                          time: _timeRange(order),
-                        ),
-                        if (_hasProperty(order)) ...[
-                          const SizedBox(height: 14),
-                          _PropertyCard(order: order, s: s),
-                        ],
-                        if (_hasService(order)) ...[
-                          const SizedBox(height: 14),
-                          _ServiceCard(
-                            label: s.bookingSummaryService,
-                            item: order.service ??
-                                OrderServiceItem(title: order.serviceName),
-                          ),
-                        ],
-                        if (order.addons.isNotEmpty) ...[
-                          const SizedBox(height: 14),
-                          _AddonsCard(order: order, s: s),
-                        ],
-                        if ((order.notes ?? '').trim().isNotEmpty) ...[
-                          const SizedBox(height: 14),
-                          _NotesCard(
-                            label: s.bookingSummaryNotes,
-                            notes: order.notes!.trim(),
-                          ),
-                        ],
-                        if (order.amount != null ||
-                            order.hoursDuration != null) ...[
-                          const SizedBox(height: 14),
-                          _EstimateCard(
-                            title: s.bookingEstimateTitle,
-                            price: order.amount == null
-                                ? null
-                                : _formatPrice(order.amount),
-                            hours: order.hoursDuration == null
-                                ? null
-                                : s.bookingHoursValue(
-                                    _formatHours(order.hoursDuration),
-                                  ),
-                          ),
-                        ],
-                        if ((_data?.statusTimeline ?? []).isNotEmpty) ...[
-                          const SizedBox(height: 14),
-                          _TimelineCard(
-                            title: s.statusTimelineLabel,
-                            events: _data!.statusTimeline,
-                            confirmed: order.operatorConfirmed,
-                            formatDateTime: _formatDateTime,
-                          ),
-                        ],
-                        if (_canDelete) ...[
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 52,
-                            child: OutlinedButton(
-                              onPressed: _deleting ? null : _confirmDelete,
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: const Color(0xFFE53935),
-                                side: const BorderSide(
-                                  color: Color(0xFFE53935),
-                                  width: 1.4,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              child: _deleting
-                                  ? const SizedBox(
-                                      width: 22,
-                                      height: 22,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.4,
-                                        color: Color(0xFFE53935),
-                                      ),
-                                    )
-                                  : Text(
-                                      s.deleteRequest,
-                                      style: AppFonts.montserrat(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w800,
-                                        color: const Color(0xFFE53935),
-                                      ),
-                                    ),
+                          Text(
+                            s.orderFrozen,
+                            style: AppFonts.headline(
+                              fontSize: 18,
+                              color: const Color(0xFFE53935),
                             ),
                           ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _freezeReason(s, order),
+                            style: AppFonts.body(color: AppColors.darkLiver),
+                          ),
+                          const SizedBox(height: 14),
+                          FilledButton(
+                            onPressed: _paying ? null : _restorePayment,
+                            child: _paying
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(s.retryPayment),
+                          ),
                         ],
-                      ],
                       ),
                     ),
+                  ],
+                  if (order.locationTrackingActive) ...[
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          showLiveTrackingMap(context, orderId: order.id);
+                        },
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.pictonBlue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        icon: const Icon(Icons.near_me_rounded),
+                        label: Text(
+                          s.trackingButton,
+                          style: AppFonts.montserrat(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  _VisitCard(
+                    label: s.orderVisit,
+                    typeLabel: _scheduleTypeLabel(s, order),
+                    date: _formatDate(order.date),
+                    time: _timeRange(order),
+                  ),
+                  if (_hasProperty(order)) ...[
+                    const SizedBox(height: 14),
+                    _PropertyCard(order: order, s: s),
+                  ],
+                  if (_hasService(order)) ...[
+                    const SizedBox(height: 14),
+                    _ServiceCard(
+                      label: s.bookingSummaryService,
+                      item:
+                          order.service ??
+                          OrderServiceItem(title: order.serviceName),
+                    ),
+                  ],
+                  if (order.addons.isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    _AddonsCard(order: order, s: s),
+                  ],
+                  if ((order.notes ?? '').trim().isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    _NotesCard(
+                      label: s.bookingSummaryNotes,
+                      notes: order.notes!.trim(),
+                    ),
+                  ],
+                  if (order.amount != null || order.hoursDuration != null) ...[
+                    const SizedBox(height: 14),
+                    _EstimateCard(
+                      title: s.bookingEstimateTitle,
+                      price: order.amount == null
+                          ? null
+                          : _formatPrice(order.amount),
+                      hours: order.hoursDuration == null
+                          ? null
+                          : s.bookingHoursValue(
+                              _formatHours(order.hoursDuration),
+                            ),
+                    ),
+                  ],
+                  if ((_data?.statusTimeline ?? []).isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    _TimelineCard(
+                      title: s.statusTimelineLabel,
+                      events: _data!.statusTimeline,
+                      confirmed: order.operatorConfirmed,
+                      formatDateTime: _formatDateTime,
+                    ),
+                  ],
+                  if (order.activeDispute != null) ...[
+                    const SizedBox(height: 14),
+                    _SoftCard(
+                      child: Row(
+                        children: [
+                          const _SoftIcon(icon: Icons.report_problem_outlined),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  s.problemReported,
+                                  style: AppFonts.montserrat(
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.darkGray,
+                                  ),
+                                ),
+                                Text(
+                                  s.requestStatusLabel(
+                                    order.activeDispute!['status']
+                                            ?.toString() ??
+                                        'new',
+                                  ),
+                                  style: AppFonts.body(
+                                    color: AppColors.darkGray,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (order.activeDispute!['id'] != null)
+                            IconButton(
+                              onPressed: () =>
+                                  _openActiveDispute(order.activeDispute!),
+                              icon: const Icon(Icons.chevron_right_rounded),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ] else if (order.canOpenDispute) ...[
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      height: 52,
+                      child: OutlinedButton.icon(
+                        onPressed: _openDispute,
+                        icon: const Icon(Icons.report_problem_outlined),
+                        label: Text(s.reportProblem),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.darkGray,
+                          side: const BorderSide(
+                            color: AppColors.pictonBlue,
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if ((order.disputeDeadlineAt ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        s.reportProblemUntil(
+                          _formatDateTime(order.disputeDeadlineAt),
+                        ),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.body(
+                          fontSize: 12,
+                          color: AppColors.darkGray.withValues(alpha: .55),
+                        ),
+                      ),
+                    ],
+                  ],
+                  if (_canDelete) ...[
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: OutlinedButton(
+                        onPressed: _deleting ? null : _confirmDelete,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFE53935),
+                          side: const BorderSide(
+                            color: Color(0xFFE53935),
+                            width: 1.4,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: _deleting
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                  color: Color(0xFFE53935),
+                                ),
+                              )
+                            : Text(
+                                s.deleteRequest,
+                                style: AppFonts.montserrat(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: const Color(0xFFE53935),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
     );
   }
 
@@ -482,10 +692,7 @@ class _VisitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = [
-      date,
-      time,
-    ].where((item) => item.isNotEmpty).join(' · ');
+    final subtitle = [date, time].where((item) => item.isNotEmpty).join(' · ');
 
     return _SoftCard(
       child: _IconRow(
@@ -544,7 +751,8 @@ class _PropertyCard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => PropertyDetailScreen(propertyId: propertyId),
+                    builder: (_) =>
+                        PropertyDetailScreen(propertyId: propertyId),
                   ),
                 );
               },
@@ -681,7 +889,7 @@ class _AddonsCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                '${s.orderWindows}: ${order.windowCount}',
+                '${s.orderWindows}: ${order.windowCount}${order.windowsInside || order.windowsOutside ? ' · ${[if (order.windowsInside) s.bookingWindowsInside, if (order.windowsOutside) s.bookingWindowsOutside].join(' + ')}' : ''}',
                 style: AppFonts.montserrat(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -778,11 +986,7 @@ class _NotesCard extends StatelessWidget {
 }
 
 class _EstimateCard extends StatelessWidget {
-  const _EstimateCard({
-    required this.title,
-    this.price,
-    this.hours,
-  });
+  const _EstimateCard({required this.title, this.price, this.hours});
 
   final String title;
   final String? price;

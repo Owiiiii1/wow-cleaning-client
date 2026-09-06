@@ -9,6 +9,7 @@ String scheduleStatusLabel(S s, String? status, bool confirmed) {
     'started' => s.scheduleStatusStarted,
     'finished' => s.scheduleStatusFinished,
     'cancelled' => s.scheduleStatusCancelled,
+    'frozen' => s.orderFrozen,
     'new' => s.scheduleStatusPending,
     _ => (status ?? '').replaceAll('_', ' '),
   };

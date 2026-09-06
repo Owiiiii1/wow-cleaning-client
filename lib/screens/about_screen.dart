@@ -54,9 +54,9 @@ class _AboutScreenState extends State<AboutScreen> {
       await launchUrl(uri, mode: LaunchMode.platformDefault);
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.current.openLinkFailed)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(S.current.openLinkFailed)));
     }
   }
 
@@ -130,10 +130,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        const Divider(
-                          color: Color(0xFFE4E2E2),
-                          thickness: 1,
-                        ),
+                        const Divider(color: Color(0xFFE4E2E2), thickness: 1),
                         const SizedBox(height: 28),
                         Text(
                           s.releaseDateLabel,

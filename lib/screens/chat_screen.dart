@@ -8,11 +8,7 @@ import 'package:wow_cleaning/services/chat_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({
-    super.key,
-    required this.isActive,
-    this.onUnreadCleared,
-  });
+  const ChatScreen({super.key, required this.isActive, this.onUnreadCleared});
 
   /// When false (IndexedStack off-tab), do not call /client/chat (mark-read).
   final bool isActive;
@@ -136,15 +132,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
     setState(() => _sending = true);
     try {
-      await _api.sendMessage(message: text.isEmpty ? null : text, imagePath: imagePath);
+      await _api.sendMessage(
+        message: text.isEmpty ? null : text,
+        imagePath: imagePath,
+      );
       _textController.clear();
       await _load();
       _scrollToBottom();
     } on ApiException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.displayMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.displayMessage)));
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -163,9 +162,9 @@ class _ChatScreenState extends State<ChatScreen> {
       await _load();
     } on ApiException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.displayMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.displayMessage)));
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -197,9 +196,9 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     } on ApiException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.displayMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.displayMessage)));
     }
   }
 
@@ -222,36 +221,40 @@ class _ChatScreenState extends State<ChatScreen> {
       children: [
         Expanded(
           child: _loading
-              ? const Center(child: CircularProgressIndicator(color: AppColors.pictonBlue))
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppColors.pictonBlue),
+                )
               : _error != null && _messages.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Text(
-                          _error!,
-                          textAlign: TextAlign.center,
-                          style: AppFonts.body(color: AppColors.darkGray),
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-                      itemCount: _messages.where((m) => !m.isDeleted).length,
-                      itemBuilder: (context, index) {
-                        final visible = _messages.where((m) => !m.isDeleted).toList();
-                        final msg = visible[index];
-                        return _MessageBubble(
-                          message: msg,
-                          timeLabel: _formatTime(msg.createdAt),
-                          editedLabel: s.chatEdited,
-                          onEdit: msg.isMine && (msg.body?.isNotEmpty ?? false)
-                              ? () => _startEdit(msg)
-                              : null,
-                          onDelete: msg.isMine ? () => _delete(msg) : null,
-                        );
-                      },
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      _error!,
+                      textAlign: TextAlign.center,
+                      style: AppFonts.body(color: AppColors.darkGray),
                     ),
+                  ),
+                )
+              : ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  itemCount: _messages.where((m) => !m.isDeleted).length,
+                  itemBuilder: (context, index) {
+                    final visible = _messages
+                        .where((m) => !m.isDeleted)
+                        .toList();
+                    final msg = visible[index];
+                    return _MessageBubble(
+                      message: msg,
+                      timeLabel: _formatTime(msg.createdAt),
+                      editedLabel: s.chatEdited,
+                      onEdit: msg.isMine && (msg.body?.isNotEmpty ?? false)
+                          ? () => _startEdit(msg)
+                          : null,
+                      onDelete: msg.isMine ? () => _delete(msg) : null,
+                    );
+                  },
+                ),
         ),
         if (_editingId != null)
           Container(
@@ -263,7 +266,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: Text(
                     s.chatEditing,
-                    style: AppFonts.body(color: AppColors.darkGray, fontSize: 13),
+                    style: AppFonts.body(
+                      color: AppColors.darkGray,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
                 TextButton(
@@ -285,7 +291,10 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               IconButton(
                 onPressed: _sending || _editingId != null ? null : _pickImage,
-                icon: const Icon(Icons.image_outlined, color: AppColors.darkGray),
+                icon: const Icon(
+                  Icons.image_outlined,
+                  color: AppColors.darkGray,
+                ),
               ),
               Expanded(
                 child: TextField(
@@ -421,7 +430,10 @@ class _MessageBubble extends StatelessWidget {
                         if ((message.body ?? '').isNotEmpty)
                           Text(
                             message.body!,
-                            style: AppFonts.body(color: textColor, fontSize: 15),
+                            style: AppFonts.body(
+                              color: textColor,
+                              fontSize: 15,
+                            ),
                           ),
                       ],
                     ),

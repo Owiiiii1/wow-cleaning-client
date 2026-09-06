@@ -96,8 +96,7 @@ class BottomNavPanel extends StatelessWidget {
                 _slot(
                   panelW: panelW,
                   centerX: BottomNavButtons.profileCenterX,
-                  offsetY:
-                      BottomNavButtons.profileOffsetY * scale + bottomFill,
+                  offsetY: BottomNavButtons.profileOffsetY * scale + bottomFill,
                   width: BottomNavButtons.profileWidth * scale,
                   height: BottomNavButtons.profileHeight * scale,
                   child: _ProfileNavItem(
@@ -157,8 +156,7 @@ class BottomNavPanel extends StatelessWidget {
     required double scale,
   }) {
     final size = BottomNavButtons.centerSize * scale;
-    final left =
-        panelW / 2 - size / 2 + BottomNavButtons.centerOffsetX * scale;
+    final left = panelW / 2 - size / 2 + BottomNavButtons.centerOffsetX * scale;
 
     return Positioned(
       left: left,
@@ -206,9 +204,7 @@ class _CenterNavButtonState extends State<_CenterNavButton> {
             DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.orange.withValues(alpha: 0.8),
-                ),
+                border: Border.all(color: Colors.orange.withValues(alpha: 0.8)),
               ),
             ),
           // Оба ассета всегда в дереве — без мигания при первой смене.
@@ -241,10 +237,7 @@ class _CenterNavButtonState extends State<_CenterNavButton> {
 }
 
 class _HomeNavItem extends StatelessWidget {
-  const _HomeNavItem({
-    required this.selected,
-    required this.onTap,
-  });
+  const _HomeNavItem({required this.selected, required this.onTap});
 
   final bool selected;
   final VoidCallback onTap;
@@ -264,10 +257,7 @@ class _HomeNavItem extends StatelessWidget {
 }
 
 class _ScheduleNavItem extends StatelessWidget {
-  const _ScheduleNavItem({
-    required this.selected,
-    required this.onTap,
-  });
+  const _ScheduleNavItem({required this.selected, required this.onTap});
 
   final bool selected;
   final VoidCallback onTap;
@@ -354,10 +344,7 @@ class _ChatNavItem extends StatelessWidget {
 }
 
 class _ProfileNavItem extends StatelessWidget {
-  const _ProfileNavItem({
-    required this.selected,
-    required this.onTap,
-  });
+  const _ProfileNavItem({required this.selected, required this.onTap});
 
   final bool selected;
   final VoidCallback onTap;

@@ -75,11 +75,7 @@ class AppFonts {
     Color color = AppColors.darkLiver,
     FontWeight fontWeight = FontWeight.w400,
   }) {
-    return montserrat(
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      color: color,
-    );
+    return montserrat(fontSize: fontSize, fontWeight: fontWeight, color: color);
   }
 }
 

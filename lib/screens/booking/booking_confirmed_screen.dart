@@ -3,10 +3,7 @@ import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
 
 class BookingConfirmedScreen extends StatelessWidget {
-  const BookingConfirmedScreen({
-    super.key,
-    required this.onBackHome,
-  });
+  const BookingConfirmedScreen({super.key, required this.onBackHome});
 
   final VoidCallback onBackHome;
 

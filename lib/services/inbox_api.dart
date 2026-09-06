@@ -12,6 +12,7 @@ class InboxMessage {
     this.actions = const [],
     this.reminderStatus,
     this.orderId,
+    this.actionRequiredBy,
   });
 
   final int id;
@@ -24,10 +25,16 @@ class InboxMessage {
   final List<String> actions;
   final String? reminderStatus;
   final int? orderId;
+  final String? actionRequiredBy;
 
-  bool get hasReminderActions => actions.isNotEmpty && kind == 'cleaning_reminder';
+  bool get hasReminderActions =>
+      actions.isNotEmpty && kind == 'cleaning_reminder';
 
   bool get isFinishedRating => kind == 'order_finished';
+  bool get hasPaymentAction =>
+      kind == 'payment_action_required' &&
+      actions.contains('pay') &&
+      orderId != null;
 
   factory InboxMessage.fromJson(Map<String, dynamic> json) {
     final actions = <String>[];
@@ -52,15 +59,13 @@ class InboxMessage {
       actions: actions,
       reminderStatus: json['reminder_status']?.toString(),
       orderId: (json['order_id'] as num?)?.toInt(),
+      actionRequiredBy: json['action_required_by']?.toString(),
     );
   }
 }
 
 class InboxUnreadSnapshot {
-  InboxUnreadSnapshot({
-    required this.count,
-    required this.items,
-  });
+  InboxUnreadSnapshot({required this.count, required this.items});
 
   final int count;
   final List<InboxMessage> items;
@@ -130,6 +135,24 @@ class InboxApi {
     });
     final data = payload['data'] as Map<String, dynamic>? ?? {};
     return InboxMessage.fromJson(data);
+  }
+
+  Future<void> submitSurvey(
+    int id, {
+    required int cleaningQuality,
+    required int punctuality,
+    required int communication,
+    required int serviceConvenience,
+    String? improvementComment,
+  }) async {
+    await _client.postJson('client/inbox/$id/survey', {
+      'cleaning_quality': cleaningQuality,
+      'punctuality': punctuality,
+      'communication': communication,
+      'service_convenience': serviceConvenience,
+      if (improvementComment != null && improvementComment.trim().isNotEmpty)
+        'improvement_comment': improvementComment.trim(),
+    });
   }
 
   Future<void> syncLocale(String locale) async {

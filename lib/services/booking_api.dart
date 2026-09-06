@@ -64,7 +64,8 @@ class AvailabilityWindow {
       endTime: json['end_time']?.toString() ?? '',
       slotHours: (json['slot_hours'] as num?)?.toDouble() ?? 0,
       availableStaff: (json['available_staff'] as num?)?.toInt() ?? 1,
-      needsPreferredStart: json['needs_preferred_start'] == true ||
+      needsPreferredStart:
+          json['needs_preferred_start'] == true ||
           json['needs_preferred_start'] == 1,
       latestStartTime: json['latest_start_time']?.toString() ?? '',
       preferredStarts: rawStarts is List
@@ -110,11 +111,13 @@ class AvailabilityResult {
       available: json['available'] == true || json['available'] == 1,
       windows: raw is List
           ? raw
-              .whereType<Map>()
-              .map((item) => AvailabilityWindow.fromJson(
+                .whereType<Map>()
+                .map(
+                  (item) => AvailabilityWindow.fromJson(
                     Map<String, dynamic>.from(item),
-                  ))
-              .toList()
+                  ),
+                )
+                .toList()
           : const [],
     );
   }
@@ -130,16 +133,17 @@ class BookingApi {
     required int cleaningServiceId,
     List<int> addonServiceIds = const [],
     int windowCount = 0,
+    bool windowsInside = false,
+    bool windowsOutside = false,
   }) async {
-    final payload = await _client.postJson(
-      'client/quotes',
-      {
-        'client_property_id': clientPropertyId,
-        'cleaning_service_id': cleaningServiceId,
-        'addon_service_ids': addonServiceIds,
-        'window_count': windowCount,
-      },
-    );
+    final payload = await _client.postJson('client/quotes', {
+      'client_property_id': clientPropertyId,
+      'cleaning_service_id': cleaningServiceId,
+      'addon_service_ids': addonServiceIds,
+      'window_count': windowCount,
+      'windows_inside': windowsInside,
+      'windows_outside': windowsOutside,
+    });
     final data = payload['data'] as Map<String, dynamic>? ?? {};
     return BookingQuote.fromJson(data);
   }
@@ -150,15 +154,12 @@ class BookingApi {
     int staffCount = 1,
     int? ignoreHoldId,
   }) async {
-    final payload = await _client.postJson(
-      'client/availability',
-      {
-        'date': date,
-        'duration_hours': durationHours,
-        'staff_count': staffCount,
-        if (ignoreHoldId != null) 'ignore_hold_id': ignoreHoldId,
-      },
-    );
+    final payload = await _client.postJson('client/availability', {
+      'date': date,
+      'duration_hours': durationHours,
+      'staff_count': staffCount,
+      'ignore_hold_id': ?ignoreHoldId,
+    });
     final data = payload['data'] as Map<String, dynamic>? ?? {};
     return AvailabilityResult.fromJson(data);
   }
@@ -170,16 +171,13 @@ class BookingApi {
     int staffCount = 1,
     int? replaceHoldId,
   }) async {
-    final payload = await _client.postJson(
-      'client/availability/holds',
-      {
-        'date': date,
-        'start_time': startTime,
-        'duration_hours': durationHours,
-        'staff_count': staffCount,
-        if (replaceHoldId != null) 'replace_hold_id': replaceHoldId,
-      },
-    );
+    final payload = await _client.postJson('client/availability/holds', {
+      'date': date,
+      'start_time': startTime,
+      'duration_hours': durationHours,
+      'staff_count': staffCount,
+      'replace_hold_id': ?replaceHoldId,
+    });
     final data = payload['data'] as Map<String, dynamic>? ?? {};
     return BookingHold.fromJson(data);
   }
@@ -193,6 +191,8 @@ class BookingApi {
     required int cleaningServiceId,
     List<int> addonServiceIds = const [],
     int windowCount = 0,
+    bool windowsInside = false,
+    bool windowsOutside = false,
     required String scheduleType,
     String? recurrence,
     required String requestedDate,
@@ -200,22 +200,21 @@ class BookingApi {
     required int holdId,
     String? notes,
   }) async {
-    final payload = await _client.postJson(
-      'client/booking-requests',
-      {
-        'client_property_id': clientPropertyId,
-        'cleaning_service_id': cleaningServiceId,
-        'addon_service_ids': addonServiceIds,
-        'window_count': windowCount,
-        'schedule_type': scheduleType,
-        'recurrence': ?recurrence,
-        'requested_date': requestedDate,
-        'requested_time': requestedTime,
-        'hold_id': holdId,
-        if (notes != null && notes.isNotEmpty) 'notes': notes,
-        'payment_mode': 'fake',
-      },
-    );
+    final payload = await _client.postJson('client/booking-requests', {
+      'client_property_id': clientPropertyId,
+      'cleaning_service_id': cleaningServiceId,
+      'addon_service_ids': addonServiceIds,
+      'window_count': windowCount,
+      'windows_inside': windowsInside,
+      'windows_outside': windowsOutside,
+      'schedule_type': scheduleType,
+      'recurrence': ?recurrence,
+      'requested_date': requestedDate,
+      'requested_time': requestedTime,
+      'hold_id': holdId,
+      if (notes != null && notes.isNotEmpty) 'notes': notes,
+      'payment_mode': 'fake',
+    });
 
     final data = payload['data'] as Map<String, dynamic>? ?? {};
     return BookingSubmitResult(

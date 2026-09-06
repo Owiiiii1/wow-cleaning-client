@@ -37,9 +37,9 @@ class _LoginScreenState extends State<LoginScreen>
     super.initState();
     _registerTap = TapGestureRecognizer()
       ..onTap = () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const RegisterScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
       };
     _enterController = AnimationController(
       vsync: this,
@@ -81,14 +81,10 @@ class _LoginScreenState extends State<LoginScreen>
     });
 
     try {
-      final response = await _api.postJson(
-        '/client/auth/login',
-        {
-          'email': email,
-          'password': password,
-        },
-        auth: false,
-      );
+      final response = await _api.postJson('/client/auth/login', {
+        'email': email,
+        'password': password,
+      }, auth: false);
 
       if (!mounted) return;
 
@@ -115,9 +111,7 @@ class _LoginScreenState extends State<LoginScreen>
       );
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => MainShell(loginData: data),
-        ),
+        MaterialPageRoute(builder: (_) => MainShell(loginData: data)),
       );
     } on ApiException catch (error) {
       setState(() {
@@ -205,22 +199,25 @@ class _LoginScreenState extends State<LoginScreen>
                                   style: AppFonts.montserrat(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
-                                    color:
-                                        AppColors.white.withValues(alpha: 0.92),
+                                    color: AppColors.white.withValues(
+                                      alpha: 0.92,
+                                    ),
                                   ),
                                   children: [
                                     TextSpan(text: s.noAccount),
                                     TextSpan(
                                       text: s.signUp,
                                       recognizer: _registerTap,
-                                      style: AppFonts.montserrat(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.white,
-                                      ).copyWith(
-                                        decoration: TextDecoration.underline,
-                                        decorationColor: AppColors.white,
-                                      ),
+                                      style:
+                                          AppFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.white,
+                                          ).copyWith(
+                                            decoration:
+                                                TextDecoration.underline,
+                                            decorationColor: AppColors.white,
+                                          ),
                                     ),
                                   ],
                                 ),

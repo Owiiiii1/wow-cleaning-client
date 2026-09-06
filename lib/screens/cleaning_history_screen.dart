@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/screens/order_detail_screen.dart';
+import 'package:wow_cleaning/screens/request_detail_screen.dart';
+import 'package:wow_cleaning/screens/request_form_screen.dart';
 import 'package:wow_cleaning/services/schedule_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
 import 'package:wow_cleaning/widgets/order_mini_card.dart';
@@ -52,6 +54,22 @@ class _CleaningHistoryScreenState extends State<CleaningHistoryScreen> {
     if (mounted) _load();
   }
 
+  Future<void> _report(ScheduleOrder order) async {
+    final created = await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => RequestFormScreen(orderId: order.id)),
+    );
+    if (created != null && mounted) _load();
+  }
+
+  Future<void> _openDispute(ScheduleOrder order) async {
+    final id = (order.activeDispute?['id'] as num?)?.toInt();
+    if (id == null) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => RequestDetailScreen(requestId: id)),
+    );
+    if (mounted) _load();
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.current;
@@ -96,10 +114,43 @@ class _CleaningHistoryScreenState extends State<CleaningHistoryScreen> {
               ..._items.map(
                 (order) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: OrderMiniCard(
-                    order: order,
-                    elevated: true,
-                    onTap: () => _open(order),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      OrderMiniCard(
+                        order: order,
+                        elevated: true,
+                        onTap: () => _open(order),
+                      ),
+                      if (order.activeDispute != null)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            onPressed: order.activeDispute?['id'] == null
+                                ? null
+                                : () => _openDispute(order),
+                            icon: const Icon(
+                              Icons.info_outline_rounded,
+                              size: 18,
+                            ),
+                            label: Text(
+                              '${s.problemReported}: ${s.requestStatusLabel(order.activeDispute?['status']?.toString() ?? 'new')}',
+                            ),
+                          ),
+                        )
+                      else if (order.canOpenDispute)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            onPressed: () => _report(order),
+                            icon: const Icon(
+                              Icons.report_problem_outlined,
+                              size: 18,
+                            ),
+                            label: Text(s.reportProblem),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),

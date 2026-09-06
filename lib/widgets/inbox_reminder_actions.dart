@@ -73,10 +73,7 @@ class _OutlineAction extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: AppFonts.headline(
-            fontSize: 16,
-            color: AppColors.darkLiver,
-          ),
+          style: AppFonts.headline(fontSize: 16, color: AppColors.darkLiver),
         ),
       ),
     );

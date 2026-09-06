@@ -74,72 +74,73 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
               child: CircularProgressIndicator(color: AppColors.pictonBlue),
             )
           : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      _error!,
-                      textAlign: TextAlign.center,
-                      style: AppFonts.body(color: AppColors.darkGray),
-                    ),
-                  ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-                  children: [
-                    if (detail?.imageUrl != null &&
-                        detail!.imageUrl!.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: AspectRatio(
-                          aspectRatio: 16 / 10,
-                          child: Image.network(
-                            detail.imageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stack) => Container(
-                              color: AppColors.pictonBlue.withValues(alpha: 0.12),
-                              alignment: Alignment.center,
-                              child: const Icon(Icons.image_outlined,
-                                  color: AppColors.darkGray),
-                            ),
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: AppFonts.body(color: AppColors.darkGray),
+                ),
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              children: [
+                if (detail?.imageUrl != null && detail!.imageUrl!.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 10,
+                      child: Image.network(
+                        detail.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stack) => Container(
+                          color: AppColors.pictonBlue.withValues(alpha: 0.12),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.image_outlined,
+                            color: AppColors.darkGray,
                           ),
                         ),
                       ),
-                    const SizedBox(height: 16),
-                    Builder(
-                      builder: (context) {
-                        final title = (detail?.title ?? '').trim().isNotEmpty
-                            ? detail!.title!.trim()
-                            : (detail?.shortDescription ?? '').trim();
-                        if (title.isEmpty) return const SizedBox.shrink();
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(
-                            title,
-                            style: AppFonts.headline(
-                              fontSize: 22,
-                              color: AppColors.darkGray,
-                            ),
-                          ),
-                        );
-                      },
                     ),
-                    Html(
-                      data: detail?.bodyHtml?.isNotEmpty == true
-                          ? detail!.bodyHtml!
-                          : '<p></p>',
-                      style: {
-                        'body': Style(
-                          margin: Margins.zero,
-                          padding: HtmlPaddings.zero,
-                          fontSize: FontSize(15),
+                  ),
+                const SizedBox(height: 16),
+                Builder(
+                  builder: (context) {
+                    final title = (detail?.title ?? '').trim().isNotEmpty
+                        ? detail!.title!.trim()
+                        : (detail?.shortDescription ?? '').trim();
+                    if (title.isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        title,
+                        style: AppFonts.headline(
+                          fontSize: 22,
                           color: AppColors.darkGray,
-                          fontFamily: AppFonts.family,
                         ),
-                      },
-                    ),
-                  ],
+                      ),
+                    );
+                  },
                 ),
+                Html(
+                  data: detail?.bodyHtml?.isNotEmpty == true
+                      ? detail!.bodyHtml!
+                      : '<p></p>',
+                  style: {
+                    'body': Style(
+                      margin: Margins.zero,
+                      padding: HtmlPaddings.zero,
+                      fontSize: FontSize(15),
+                      color: AppColors.darkGray,
+                      fontFamily: AppFonts.family,
+                    ),
+                  },
+                ),
+              ],
+            ),
     );
   }
 }

@@ -5,6 +5,8 @@ import 'package:wow_cleaning/screens/booking/booking_state.dart';
 import 'package:wow_cleaning/screens/property_form_screen.dart';
 import 'package:wow_cleaning/services/api_client.dart';
 import 'package:wow_cleaning/services/booking_api.dart';
+import 'package:wow_cleaning/services/payment_method_api.dart';
+import 'package:wow_cleaning/services/stripe_payment_coordinator.dart';
 import 'package:wow_cleaning/services/properties_api.dart';
 import 'package:wow_cleaning/services/services_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
@@ -29,6 +31,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
   final PropertiesApi _propertiesApi = PropertiesApi();
   final ServicesApi _servicesApi = ServicesApi();
   final BookingApi _bookingApi = BookingApi();
+  final PaymentMethodApi _paymentMethodApi = PaymentMethodApi();
+  final StripePaymentCoordinator _stripe = StripePaymentCoordinator();
 
   int _step = 0;
   bool _submitting = false;
@@ -44,6 +48,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
   bool _checkingAvailability = false;
   bool _reserving = false;
   bool _holdCommitted = false;
+  bool _awaitingCardSetup = false;
+  SavedPaymentMethod? _savedCard;
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _windowsController = TextEditingController();
 
@@ -181,19 +187,19 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
   }
 
   bool get _canNext => switch (_step) {
-        0 => _state.canGoProperty,
-        1 => _state.canGoService,
-        2 => _state.canGoAddons,
-        3 => _state.canGoSchedule,
-        4 => _state.canGoWishes,
-        5 => !_submitting,
-        _ => false,
-      };
+    0 => _state.canGoProperty,
+    1 => _state.canGoService,
+    2 => _state.canGoAddons,
+    3 => _state.canGoSchedule,
+    4 => _state.canGoWishes,
+    5 => !_submitting && !_awaitingCardSetup,
+    _ => false,
+  };
 
   Future<void> _openAddProperty() async {
-    final created = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => const PropertyFormScreen()),
-    );
+    final created = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => const PropertyFormScreen()));
     if (created != true) return;
     await _loadProperties();
     if (!mounted || _properties.isEmpty) return;
@@ -263,9 +269,7 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
       if (_state.quote == null) {
         await _loadQuote();
       }
-      final hours = (_state.quote?.hours ?? 0) > 0
-          ? _state.quote!.hours
-          : 2.0;
+      final hours = (_state.quote?.hours ?? 0) > 0 ? _state.quote!.hours : 2.0;
       final result = await _bookingApi.checkAvailability(
         date: date,
         durationHours: hours,
@@ -340,16 +344,31 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     return out;
   }
 
+  String _windowSidesLabel(S s) {
+    final parts = <String>[];
+    if (_state.windowsInside) parts.add(s.bookingWindowsInside);
+    if (_state.windowsOutside) parts.add(s.bookingWindowsOutside);
+    return parts.join(' + ');
+  }
+
   Future<void> _onPrimary() async {
     if (_step < 5) {
       if (!_canNext) return;
-      if (_step == 0 && _state.property != null && !_state.property!.hasHousingParams) {
+      if (_step == 0 &&
+          _state.property != null &&
+          !_state.property!.hasHousingParams) {
         setState(() => _error = S.current.propertyIncomplete);
         return;
       }
-      if (_step == 2 && _state.hasWindowCleaning && _state.windowCount < 1) {
-        setState(() => _error = S.current.bookingWindowsRequired);
-        return;
+      if (_step == 2 && _state.hasWindowCleaning) {
+        if (_state.windowCount < 1) {
+          setState(() => _error = S.current.bookingWindowsRequired);
+          return;
+        }
+        if (!_state.hasWindowSides) {
+          setState(() => _error = S.current.bookingWindowsSidesRequired);
+          return;
+        }
       }
       final next = _step + 1;
       setState(() {
@@ -359,9 +378,12 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
       if (next == 3 || next == 5) {
         await _loadQuote();
       }
+      if (next == 5) {
+        await _prefetchPaymentMethod();
+      }
       return;
     }
-    await _submit();
+    await _confirmWithCard();
   }
 
   Future<void> _loadQuote() async {
@@ -375,6 +397,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
         cleaningServiceId: service.id,
         addonServiceIds: _state.addonIds,
         windowCount: _state.windowCount,
+        windowsInside: _state.windowsInside,
+        windowsOutside: _state.windowsOutside,
       );
       if (!mounted) return;
       setState(() {
@@ -396,6 +420,89 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
         _error = S.current.bookingEstimateFailed;
       });
     }
+  }
+
+  Future<void> _prefetchPaymentMethod() async {
+    try {
+      final status = await _paymentMethodApi.fetch();
+      if (!mounted) return;
+      setState(() {
+        _savedCard = status.hasCard ? status.paymentMethod : null;
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _confirmWithCard() async {
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    try {
+      final status = await _paymentMethodApi.fetch();
+      if (!mounted) return;
+      if (status.hasCard) {
+        setState(() {
+          _submitting = false;
+          _savedCard = status.paymentMethod;
+        });
+        await _showCardLinkedDialog(status.paymentMethod);
+        if (!mounted) return;
+        await _submit();
+        return;
+      }
+
+      final session = await _stripe.setupCard();
+      if (!mounted) return;
+      if (session.hasCard) {
+        setState(() {
+          _submitting = false;
+          _savedCard = session.paymentMethod;
+        });
+        await _showCardLinkedDialog(session.paymentMethod);
+        if (!mounted) return;
+        await _submit();
+        return;
+      }
+      setState(() {
+        _submitting = false;
+        _error = S.current.cardSetupCancelled;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _error = e.message;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _error = S.current.bookingSubmitFailed;
+      });
+    }
+  }
+
+  Future<void> _showCardLinkedDialog(SavedPaymentMethod? card) async {
+    final s = S.current;
+    final details = card?.displayLabel;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(s.cardAlreadyLinked),
+        content: details == null
+            ? null
+            : Text(
+                details,
+                style: AppFonts.body(fontSize: 15, color: AppColors.darkGray),
+              ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(s.cardSetupContinue),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _submit() async {
@@ -423,6 +530,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
         cleaningServiceId: service.id,
         addonServiceIds: _state.addonIds,
         windowCount: _state.windowCount,
+        windowsInside: _state.windowsInside,
+        windowsOutside: _state.windowsOutside,
         scheduleType: _state.scheduleTypeApi,
         recurrence: _state.recurrenceApi,
         requestedDate: date,
@@ -535,8 +644,9 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                     child: LinearProgressIndicator(
                       value: (_step + 1) / _totalSteps,
                       minHeight: 6,
-                      backgroundColor:
-                          AppColors.darkGray.withValues(alpha: 0.08),
+                      backgroundColor: AppColors.darkGray.withValues(
+                        alpha: 0.08,
+                      ),
                       color: AppColors.pictonBlue,
                     ),
                   ),
@@ -570,76 +680,117 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              child: Row(
+              child: Column(
                 children: [
-                  if (_step > 0)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _submitting
-                            ? null
-                            : () {
-                                if (_step == 3) {
-                                  _releaseHold();
-                                  _state.clearAvailability();
-                                }
-                                setState(() {
-                                  _step -= 1;
-                                  _error = null;
-                                });
-                              },
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size.fromHeight(52),
-                          foregroundColor: AppColors.darkGray,
-                          side: BorderSide(
-                            color: AppColors.darkGray.withValues(alpha: 0.2),
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
-                          ),
-                        ),
-                        child: Text(
-                          s.back,
-                          style: AppFonts.montserrat(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                  if (_step == 5) ...[
+                    Text(
+                      _awaitingCardSetup
+                          ? s.cardSetupPending
+                          : (_savedCard != null
+                                ? '${s.cardAlreadyLinked} ${_savedCard!.displayLabel}'
+                                : s.cardSetupBefore),
+                      textAlign: TextAlign.center,
+                      style: AppFonts.body(
+                        fontSize: 13,
+                        color: AppColors.darkGray.withValues(alpha: 0.7),
                       ),
                     ),
-                  if (_step > 0) const SizedBox(width: 10),
-                  Expanded(
-                    flex: 2,
-                    child: FilledButton(
-                      onPressed: _canNext && !_submitting && !_reserving ? _onPrimary : null,
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        backgroundColor: AppColors.pictonBlue,
-                        disabledBackgroundColor:
-                            AppColors.pictonBlue.withValues(alpha: 0.4),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                      ),
-                      child: _submitting
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.4,
-                                color: Colors.white,
+                    const SizedBox(height: 10),
+                  ],
+                  Row(
+                    children: [
+                      if (_step > 0)
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: _submitting
+                                ? null
+                                : () {
+                                    if (_step == 3) {
+                                      _releaseHold();
+                                      _state.clearAvailability();
+                                    }
+                                    setState(() {
+                                      _step -= 1;
+                                      _error = null;
+                                      _awaitingCardSetup = false;
+                                    });
+                                  },
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(52),
+                              foregroundColor: AppColors.darkGray,
+                              side: BorderSide(
+                                color: AppColors.darkGray.withValues(
+                                  alpha: 0.2,
+                                ),
                               ),
-                            )
-                          : Text(
-                              _step == 5 ? s.payNow : s.next,
-                              style: AppFonts.montserrat(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(28),
                               ),
                             ),
-                    ),
+                            child: Text(
+                              s.back,
+                              style: AppFonts.montserrat(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (_step > 0) const SizedBox(width: 10),
+                      Expanded(
+                        flex: 2,
+                        child: FilledButton(
+                          onPressed:
+                              _canNext &&
+                                  !_submitting &&
+                                  !_reserving &&
+                                  !_awaitingCardSetup
+                              ? _onPrimary
+                              : null,
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(52),
+                            backgroundColor: AppColors.pictonBlue,
+                            disabledBackgroundColor: AppColors.pictonBlue
+                                .withValues(alpha: 0.4),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28),
+                            ),
+                          ),
+                          child: _submitting || _awaitingCardSetup
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.4,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  _step == 5 ? s.securePaymentMethod : s.next,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  style: AppFonts.montserrat(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
+                  if (_step == 5) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      s.cardSetupHint,
+                      textAlign: TextAlign.center,
+                      style: AppFonts.body(
+                        fontSize: 12,
+                        color: AppColors.darkGray.withValues(alpha: 0.55),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -732,9 +883,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                           ? Image.network(
                               item.mainImageUrl!,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stack) => _iconBox(
-                                Icons.home_work_outlined,
-                              ),
+                              errorBuilder: (context, error, stack) =>
+                                  _iconBox(Icons.home_work_outlined),
                             )
                           : _iconBox(Icons.home_work_outlined),
                     ),
@@ -752,10 +902,10 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                             color: AppColors.darkGray,
                           ),
                         ),
-                        if ((item.address ?? '').isNotEmpty) ...[
+                        if ((item.displayAddress ?? '').isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
-                            item.address!,
+                            item.displayAddress!,
                             style: AppFonts.body(
                               fontSize: 13,
                               color: AppColors.darkGray.withValues(alpha: 0.55),
@@ -973,6 +1123,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                   _state.clearAvailability();
                   if (item.isWindowCleaning && !_state.hasWindowCleaning) {
                     _windowsController.clear();
+                    _state.windowsInside = false;
+                    _state.windowsOutside = false;
                   }
                 });
               },
@@ -1058,10 +1210,96 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  const BorderSide(color: AppColors.pictonBlue, width: 1.4),
+              borderSide: const BorderSide(
+                color: AppColors.pictonBlue,
+                width: 1.4,
+              ),
             ),
           ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          s.bookingWindowsFormula,
+          style: AppFonts.body(
+            fontSize: 13,
+            color: AppColors.darkGray.withValues(alpha: 0.55),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _SelectableCard(
+                selected: _state.windowsInside,
+                onTap: () {
+                  _releaseHold();
+                  setState(() {
+                    _state.windowsInside = !_state.windowsInside;
+                    _state.quote = null;
+                    _state.clearAvailability();
+                  });
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        s.bookingWindowsInside,
+                        style: AppFonts.montserrat(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.darkGray,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      _state.windowsInside
+                          ? Icons.check_box_rounded
+                          : Icons.check_box_outline_blank_rounded,
+                      color: _state.windowsInside
+                          ? AppColors.pictonBlue
+                          : AppColors.darkGray.withValues(alpha: 0.3),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _SelectableCard(
+                selected: _state.windowsOutside,
+                onTap: () {
+                  _releaseHold();
+                  setState(() {
+                    _state.windowsOutside = !_state.windowsOutside;
+                    _state.quote = null;
+                    _state.clearAvailability();
+                  });
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        s.bookingWindowsOutside,
+                        style: AppFonts.montserrat(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.darkGray,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      _state.windowsOutside
+                          ? Icons.check_box_rounded
+                          : Icons.check_box_outline_blank_rounded,
+                      color: _state.windowsOutside
+                          ? AppColors.pictonBlue
+                          : AppColors.darkGray.withValues(alpha: 0.3),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     ];
@@ -1071,20 +1309,18 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     final dateText = _state.date == null
         ? s.bookingPickDate
         : '${_state.date!.day.toString().padLeft(2, '0')}.'
-            '${_state.date!.month.toString().padLeft(2, '0')}.'
-            '${_state.date!.year}';
+              '${_state.date!.month.toString().padLeft(2, '0')}.'
+              '${_state.date!.year}';
     final durationHours = (_state.quote?.hours ?? 0) > 0
         ? _state.quote!.hours
         : 0.0;
     final selected = _state.selectedWindow;
-    final preferredStarts = selected != null && selected.needsPreferredStart
-        ? _preferredStarts(selected)
+    final preferredStarts = (selected?.needsPreferredStart ?? false)
+        ? _preferredStarts(selected!)
         : const <TimeOfDayValue>[];
-    final jobEnd = _state.time == null
-        ? null
-        : _state.time!
-            .addMinutes(((_state.quote?.hours ?? 2) * 60).round())
-            .ceilToTenMinutes();
+    final jobEnd = _state.time
+        ?.addMinutes(((_state.quote?.hours ?? 2) * 60).round())
+        .ceilToTenMinutes();
 
     return [
       Text(
@@ -1160,9 +1396,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
             _Chip(
               label: s.bookingWeekly,
               selected: _state.recurrence == BookingRecurrence.weekly,
-              onTap: () => setState(
-                () => _state.recurrence = BookingRecurrence.weekly,
-              ),
+              onTap: () =>
+                  setState(() => _state.recurrence = BookingRecurrence.weekly),
             ),
             _Chip(
               label: s.bookingBiweekly,
@@ -1174,9 +1409,8 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
             _Chip(
               label: s.bookingMonthly,
               selected: _state.recurrence == BookingRecurrence.monthly,
-              onTap: () => setState(
-                () => _state.recurrence = BookingRecurrence.monthly,
-              ),
+              onTap: () =>
+                  setState(() => _state.recurrence = BookingRecurrence.monthly),
             ),
           ],
         ),
@@ -1390,8 +1624,10 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide:
-                const BorderSide(color: AppColors.pictonBlue, width: 1.4),
+            borderSide: const BorderSide(
+              color: AppColors.pictonBlue,
+              width: 1.4,
+            ),
           ),
         ),
       ),
@@ -1476,7 +1712,9 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                         ),
                         if (_state.hasWindowCleaning)
                           _ReviewChip(
-                            label: '${s.bookingWindowsLabel}: ${_state.windowCount}',
+                            label:
+                                '${s.bookingWindowsLabel}: ${_state.windowCount}'
+                                '${_state.hasWindowSides ? ' · ${_windowSidesLabel(s)}' : ''}',
                           ),
                       ],
                     ),
@@ -1529,28 +1767,13 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _formatPrice(_state.quote),
-                          style: AppFonts.montserrat(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.darkGray,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        s.bookingHoursValue(_formatHours(_state.quote?.hours ?? 0)),
-                        style: AppFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.darkGray,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    _formatPrice(_state.quote),
+                    style: AppFonts.montserrat(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.darkGray,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -1577,10 +1800,7 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
   String _formatReviewTime() {
     final start = _state.time;
     if (start == null) return '—';
-    final end = start
-        .addMinutes(((_state.quote?.hours ?? 2) * 60).round())
-        .ceilToTenMinutes();
-    return '${start.hhmm} – ${end.hhmm}';
+    return start.hhmm;
   }
 
   String _formatPrice(BookingQuote? quote) {
@@ -1599,10 +1819,10 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
   }
 
   String _recurrenceLabel(S s) => switch (_state.recurrence) {
-        BookingRecurrence.weekly => s.bookingWeekly,
-        BookingRecurrence.biweekly => s.bookingBiweekly,
-        BookingRecurrence.monthly => s.bookingMonthly,
-      };
+    BookingRecurrence.weekly => s.bookingWeekly,
+    BookingRecurrence.biweekly => s.bookingBiweekly,
+    BookingRecurrence.monthly => s.bookingMonthly,
+  };
 
   Widget _iconBox(IconData icon) {
     return Container(
@@ -1911,9 +2131,8 @@ class _ReviewPropertyBlock extends StatelessWidget {
                   ? Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stack) => const _ReviewIcon(
-                        icon: Icons.home_work_outlined,
-                      ),
+                      errorBuilder: (context, error, stack) =>
+                          const _ReviewIcon(icon: Icons.home_work_outlined),
                     )
                   : const _ReviewIcon(icon: Icons.home_work_outlined),
             ),
@@ -2026,7 +2245,7 @@ class _ReviewIconBlock extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (child != null) child!,
+                ?child,
               ],
             ),
           ),

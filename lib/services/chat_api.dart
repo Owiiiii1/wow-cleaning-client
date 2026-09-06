@@ -85,10 +85,7 @@ class ChatApi {
     return (data['unread_count'] as num?)?.toInt() ?? 0;
   }
 
-  Future<ChatMessage> sendMessage({
-    String? message,
-    String? imagePath,
-  }) async {
+  Future<ChatMessage> sendMessage({String? message, String? imagePath}) async {
     final Map<String, dynamic> payload;
     if (imagePath != null) {
       payload = await _client.postMultipart(

@@ -43,17 +43,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      final response = await _api.postJson(
-        '/client/auth/register',
-        {
-          'name': _nameController.text.trim(),
-          'email': _emailController.text.trim(),
-          'phone': _phoneController.text.trim(),
-          'password': _passwordController.text,
-          'password_confirmation': _passwordConfirmController.text,
-        },
-        auth: false,
-      );
+      final response = await _api.postJson('/client/auth/register', {
+        'name': _nameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'password': _passwordController.text,
+        'password_confirmation': _passwordConfirmController.text,
+      }, auth: false);
 
       if (!mounted) return;
 
@@ -80,9 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => MainShell(loginData: data),
-        ),
+        MaterialPageRoute(builder: (_) => MainShell(loginData: data)),
         (_) => false,
       );
     } on ApiException catch (error) {

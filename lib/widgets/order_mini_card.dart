@@ -49,11 +49,14 @@ class OrderMiniCard extends StatelessWidget {
       _formatDate(order.date),
       if (timePart.isNotEmpty) timePart,
     ].join(' · ');
-    final addonCount =
-        order.addonCount > 0 ? order.addonCount : order.addonTitles.length;
+    final addonCount = order.addonCount > 0
+        ? order.addonCount
+        : order.addonTitles.length;
 
     return Material(
-      color: color ?? AppColors.background,
+      color: order.isFrozen
+          ? const Color(0xFFFFEBEE)
+          : color ?? AppColors.background,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -61,19 +64,24 @@ class OrderMiniCard extends StatelessWidget {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: elevated
-              ? BoxDecoration(
-                  color: color ?? Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
+          decoration: BoxDecoration(
+            color: order.isFrozen
+                ? const Color(0xFFFFEBEE)
+                : (elevated ? color ?? Colors.white : Colors.transparent),
+            borderRadius: BorderRadius.circular(14),
+            border: order.isFrozen
+                ? Border.all(color: const Color(0xFFE53935), width: 2)
+                : null,
+            boxShadow: elevated
+                ? [
                     BoxShadow(
                       color: AppColors.glowShadow,
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
-                  ],
-                )
-              : null,
+                  ]
+                : null,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -90,6 +98,7 @@ class OrderMiniCard extends StatelessWidget {
                     ),
                   ),
                   OrderStatusChip(
+                    danger: order.isFrozen,
                     label: scheduleStatusLabel(
                       s,
                       order.status,
@@ -134,16 +143,19 @@ class OrderMiniCard extends StatelessWidget {
 }
 
 class OrderStatusChip extends StatelessWidget {
-  const OrderStatusChip({super.key, required this.label});
+  const OrderStatusChip({super.key, required this.label, this.danger = false});
 
   final String label;
+  final bool danger;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.yellow.withValues(alpha: 0.55),
+        color: danger
+            ? const Color(0xFFE53935)
+            : AppColors.yellow.withValues(alpha: 0.55),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -151,7 +163,7 @@ class OrderStatusChip extends StatelessWidget {
         style: AppFonts.montserrat(
           fontSize: 10,
           fontWeight: FontWeight.w700,
-          color: AppColors.darkGray,
+          color: danger ? Colors.white : AppColors.darkGray,
         ),
       ),
     );
@@ -159,7 +171,11 @@ class OrderStatusChip extends StatelessWidget {
 }
 
 class OrderInfoChip extends StatelessWidget {
-  const OrderInfoChip({super.key, required this.label, this.emphasized = false});
+  const OrderInfoChip({
+    super.key,
+    required this.label,
+    this.emphasized = false,
+  });
 
   final String label;
   final bool emphasized;

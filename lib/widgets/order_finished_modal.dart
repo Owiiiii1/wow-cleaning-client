@@ -4,10 +4,7 @@ import 'package:wow_cleaning/services/inbox_api.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
 
 class OrderFinishedModal extends StatefulWidget {
-  const OrderFinishedModal({
-    super.key,
-    required this.message,
-  });
+  const OrderFinishedModal({super.key, required this.message});
 
   final InboxMessage message;
 
@@ -109,7 +106,10 @@ class _OrderFinishedModalState extends State<OrderFinishedModal> {
                         onPressed: () => _rate(i),
                         iconSize: 36,
                         padding: const EdgeInsets.symmetric(horizontal: 4),
-                        constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                        constraints: const BoxConstraints(
+                          minWidth: 40,
+                          minHeight: 40,
+                        ),
                         icon: Icon(
                           (_hovered ?? 0) >= i
                               ? Icons.star_rounded

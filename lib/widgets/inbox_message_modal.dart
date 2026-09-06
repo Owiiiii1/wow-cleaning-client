@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/services/inbox_api.dart';
+import 'package:wow_cleaning/services/payment_action_service.dart';
 import 'package:wow_cleaning/theme/app_theme.dart';
 import 'package:wow_cleaning/widgets/branded_button.dart';
 import 'package:wow_cleaning/widgets/inbox_reminder_actions.dart';
 
 class InboxMessageModal extends StatefulWidget {
-  const InboxMessageModal({
-    super.key,
-    required this.message,
-  });
+  const InboxMessageModal({super.key, required this.message});
 
   final InboxMessage message;
 
@@ -19,6 +17,7 @@ class InboxMessageModal extends StatefulWidget {
 
 class _InboxMessageModalState extends State<InboxMessageModal> {
   final InboxApi _api = InboxApi();
+  final PaymentActionService _payments = PaymentActionService();
   bool _saving = false;
   String? _error;
 
@@ -60,11 +59,32 @@ class _InboxMessageModalState extends State<InboxMessageModal> {
     }
   }
 
+  Future<void> _paymentAction() async {
+    final orderId = widget.message.orderId;
+    if (_saving || orderId == null) return;
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      await _payments.confirm(orderId);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _error = S.current.inboxActionFailed;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.current;
     final title = (widget.message.title ?? '').trim();
     final reminder = widget.message.hasReminderActions;
+    final payment = widget.message.hasPaymentAction;
 
     return PopScope(
       canPop: false,
@@ -109,7 +129,13 @@ class _InboxMessageModalState extends State<InboxMessageModal> {
                 ),
               ],
               const SizedBox(height: 18),
-              if (reminder)
+              if (payment)
+                BrandedButton(
+                  label: s.payNow,
+                  loading: _saving,
+                  onPressed: _paymentAction,
+                )
+              else if (reminder)
                 InboxReminderActions(
                   loading: _saving,
                   onConfirm: () => _reminderAction('confirm'),

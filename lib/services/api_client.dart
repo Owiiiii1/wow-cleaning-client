@@ -32,7 +32,7 @@ class ApiException implements Exception {
 
 class ApiClient {
   ApiClient({http.Client? client, this.timeout = const Duration(seconds: 20)})
-      : _client = client ?? http.Client();
+    : _client = client ?? http.Client();
 
   final http.Client _client;
   final Duration timeout;
@@ -76,19 +76,34 @@ class ApiClient {
     }
   }
 
-  Future<Map<String, dynamic>> getJson(
-    String path, {
-    bool auth = true,
-  }) async {
+  Future<Map<String, dynamic>> getJson(String path, {bool auth = true}) async {
     try {
       final response = await _client
-          .get(
-            _uri(path),
-            headers: _headers(auth: auth),
-          )
+          .get(_uri(path), headers: _headers(auth: auth))
           .timeout(timeout);
 
       return _decode(response);
+    } on TimeoutException {
+      throw ApiException('Request timed out. Please try again.');
+    } on http.ClientException catch (error) {
+      throw ApiException('Network error: ${error.message}');
+    }
+  }
+
+  Future<List<int>> getBytes(String url, {bool auth = true}) async {
+    try {
+      final uri = Uri.tryParse(url);
+      final target = uri != null && uri.hasScheme ? uri : _uri(url);
+      final response = await _client
+          .get(target, headers: _headers(auth: auth)..remove('Content-Type'))
+          .timeout(timeout);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return response.bodyBytes;
+      }
+      throw ApiException(
+        'Request failed (HTTP ${response.statusCode})',
+        statusCode: response.statusCode,
+      );
     } on TimeoutException {
       throw ApiException('Request timed out. Please try again.');
     } on http.ClientException catch (error) {
@@ -124,10 +139,7 @@ class ApiClient {
   }) async {
     try {
       final response = await _client
-          .delete(
-            _uri(path),
-            headers: _headers(auth: auth),
-          )
+          .delete(_uri(path), headers: _headers(auth: auth))
           .timeout(timeout);
 
       return _decode(response);
@@ -144,8 +156,7 @@ class ApiClient {
     String? fileField,
     String? filePath,
     String? filename,
-    List<({String field, String path, String? filename})> extraFiles =
-        const [],
+    List<({String field, String path, String? filename})> extraFiles = const [],
     bool auth = true,
   }) async {
     try {
@@ -172,7 +183,7 @@ class ApiClient {
         );
       }
 
-      final streamed = await request.send().timeout(timeout);
+      final streamed = await _client.send(request).timeout(timeout);
       final response = await http.Response.fromStream(streamed);
       return _decode(response);
     } on TimeoutException {

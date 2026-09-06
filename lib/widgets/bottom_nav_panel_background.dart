@@ -154,12 +154,7 @@ class _PanelNinePatchPainter extends CustomPainter {
       canvas.drawImageRect(
         image,
         Rect.fromLTRB(0, bodySrcH, srcW, srcH),
-        Rect.fromLTWH(
-          0,
-          panelH - overlap,
-          size.width,
-          inset + overlap,
-        ),
+        Rect.fromLTWH(0, panelH - overlap, size.width, inset + overlap),
         fillPaint,
       );
     }

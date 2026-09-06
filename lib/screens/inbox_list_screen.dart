@@ -75,118 +75,116 @@ class _InboxListScreenState extends State<InboxListScreen> {
               child: CircularProgressIndicator(color: AppColors.pictonBlue),
             )
           : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      _error!,
-                      textAlign: TextAlign.center,
-                      style: AppFonts.body(color: AppColors.darkGray),
-                    ),
-                  ),
-                )
-              : _items.isEmpty
-                  ? Center(
-                      child: Text(
-                        s.inboxEmpty,
-                        style: AppFonts.body(
-                          color: AppColors.darkGray.withValues(alpha: 0.6),
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: AppFonts.body(color: AppColors.darkGray),
+                ),
+              ),
+            )
+          : _items.isEmpty
+          ? Center(
+              child: Text(
+                s.inboxEmpty,
+                style: AppFonts.body(
+                  color: AppColors.darkGray.withValues(alpha: 0.6),
+                ),
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+              itemCount: _items.length,
+              separatorBuilder: (_, index) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                return Material(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => InboxDetailScreen(messageId: item.id),
                         ),
-                      ),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
-                      itemCount: _items.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final item = _items[index];
-                        return Material(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            onTap: () async {
-                              await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      InboxDetailScreen(messageId: item.id),
+                      );
+                      if (mounted) _load();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  (item.title ?? '').trim().isNotEmpty
+                                      ? item.title!
+                                      : s.inboxMessage,
+                                  style: AppFonts.montserrat(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.darkGray,
+                                  ),
                                 ),
-                              );
-                              if (mounted) _load();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          (item.title ?? '').trim().isNotEmpty
-                                              ? item.title!
-                                              : s.inboxMessage,
-                                          style: AppFonts.montserrat(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w800,
-                                            color: AppColors.darkGray,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          item.body,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: AppFonts.body(
-                                            fontSize: 13,
-                                            color: AppColors.darkGray
-                                                .withValues(alpha: 0.6),
-                                          ),
-                                        ),
-                                        if (_formatDate(item.createdAt)
-                                            .isNotEmpty) ...[
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            _formatDate(item.createdAt),
-                                            style: AppFonts.body(
-                                              fontSize: 11,
-                                              color: AppColors.darkGray
-                                                  .withValues(alpha: 0.4),
-                                            ),
-                                          ),
-                                        ],
-                                      ],
+                                const SizedBox(height: 4),
+                                Text(
+                                  item.body,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppFonts.body(
+                                    fontSize: 13,
+                                    color: AppColors.darkGray.withValues(
+                                      alpha: 0.6,
                                     ),
                                   ),
-                                  if (item.isUnread)
-                                    Container(
-                                      margin: const EdgeInsets.only(left: 8),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 3,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.yellow
-                                            .withValues(alpha: 0.7),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        s.inboxNew,
-                                        style: AppFonts.montserrat(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w800,
-                                          color: AppColors.darkGray,
-                                        ),
+                                ),
+                                if (_formatDate(item.createdAt).isNotEmpty) ...[
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    _formatDate(item.createdAt),
+                                    style: AppFonts.body(
+                                      fontSize: 11,
+                                      color: AppColors.darkGray.withValues(
+                                        alpha: 0.4,
                                       ),
                                     ),
+                                  ),
                                 ],
-                              ),
+                              ],
                             ),
                           ),
-                        );
-                      },
+                          if (item.isUnread)
+                            Container(
+                              margin: const EdgeInsets.only(left: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.yellow.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                s.inboxNew,
+                                style: AppFonts.montserrat(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.darkGray,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
+                  ),
+                );
+              },
+            ),
     );
   }
 }
