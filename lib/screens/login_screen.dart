@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:wow_cleaning/config/app_config.dart';
 import 'package:wow_cleaning/config/asset_precache.dart';
 import 'package:wow_cleaning/l10n/app_strings.dart';
 import 'package:wow_cleaning/l10n/locale_controller.dart';
@@ -24,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen>
   late final Animation<double> _fade;
   late final Animation<Offset> _slide;
 
-  final _emailController = TextEditingController(text: AppConfig.demoEmail);
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _api = ApiClient();
 
