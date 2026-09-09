@@ -41,13 +41,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       (loginData['profile'] as Map?)?.cast<String, dynamic>() ?? {};
 
   String get _name {
-    final fromProfile = _profile['name']?.toString().trim() ?? '';
-    if (fromProfile.isNotEmpty) return fromProfile;
     final client = loginData['client'];
     if (client is Map) {
       final n = client['name']?.toString().trim() ?? '';
       if (n.isNotEmpty) return n;
     }
+    final fromProfile = _profile['name']?.toString().trim() ?? '';
+    if (fromProfile.isNotEmpty) return fromProfile;
     return '';
   }
 

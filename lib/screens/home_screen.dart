@@ -36,14 +36,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _trackingPoll;
 
   String get _fallbackName {
+    final client = widget.loginData['client'];
+    if (client is Map) {
+      final fromClient = client['name']?.toString().trim() ?? '';
+      if (fromClient.isNotEmpty) {
+        return fromClient;
+      }
+    }
     final profile =
         (widget.loginData['profile'] as Map?)?.cast<String, dynamic>() ?? {};
-    final client = widget.loginData['client'];
     if (profile['name'] != null && profile['name'].toString().isNotEmpty) {
       return profile['name'].toString();
-    }
-    if (client is Map && client['name'] != null) {
-      return client['name'].toString();
     }
     return '';
   }
